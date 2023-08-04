@@ -1,32 +1,63 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 
 export default function App() {
+  const [deviceToken, setDeviceToken] = useState('');
+
+  // Obtiene el token del dispositivo al iniciar la aplicación
+  useEffect(() => {
+    messaging().getToken().then(setDeviceToken);
+  }, []);
+
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("Push Notificacion recibida",remoteMessage);
+      console.log("Push Notificacion recibida", remoteMessage);
     }); 
 
-    const topic =messaging()
-    .subscribeToTopic('stevengualpa')
-    .then(()=> console.log('susvirofosfs'));
+    const back = messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log('en bacm', remoteMessage);
+    });
 
-    const back =messaging().setBackgroundMessageHandler(async (remoteMessage)=>{
-      console.log('en bacm',remoteMessage);
-    })
-    return ()=>{
-back();
-topic();
-unsubscribe();
-
-    } ;
+    return () => {
+      back();
+      unsubscribe();
+    };
   }, []);
-  
+
+  // Función para manejar el inicio de sesión
+  const handleLogin = async () => {
+    const email = 'Jorge.gualpa2015@uteq.edu.ec';
+    const password = '12345';
+
+    const response = await fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        deviceToken: deviceToken,
+      }),
+    });
+
+    const data = await response.json();
+
+    // Verifica si el inicio de sesión fue exitoso o no
+    if (data.error) {
+      Alert.alert('Error', data.error);
+    } else {
+      Alert.alert('Login exitoso', 'Bienvenido ' + data.usuario.email);
+      console.log(data);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
+      <Button title="Iniciar sesión" onPress={handleLogin} />
       <StatusBar style="auto" />
     </View>
   );
