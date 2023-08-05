@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -14,24 +14,29 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RegistroModal from './ModalRegister';
 import { useNavigation } from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
+
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const [deviceToken, setDeviceToken] = useState('');
   const [correo, setCorreo] = useState('');
   const [contraseña, setContraseña] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isButtonInverted, setButtonInverted] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false); // Estado para controlar la visibilidad del modal
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  
+  // Obtener el token del dispositivo
+  useEffect(() => {
+    messaging().getToken().then(setDeviceToken);
+  }, []);
+
   const handleLogin = () => {
     if (!correo.trim() || !contraseña.trim()) {
       Alert.alert('Campos vacíos', 'Por favor, completa todos los campos.');
       return;
     }
 
-    // Validar formato del correo utilizando una expresión regular
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const allowedDomains = ['uteq.edu.ec', 'gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com', 'outlook.es'];
     const endsWithAllowedDomain = allowedDomains.some((domain) => correo.toLowerCase().endsWith('@' + domain));
@@ -41,7 +46,6 @@ const LoginScreen = () => {
       return;
     }
 
-    // Aquí es donde se envía la solicitud HTTP POST al endpoint de inicio de sesión
     fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/login', {
       method: 'POST',
       headers: {
@@ -49,36 +53,22 @@ const LoginScreen = () => {
       },
       body: JSON.stringify({
         email: correo,
-        password: contraseña
+        password: contraseña,
+        deviceToken: deviceToken
       })
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      
+      .then(response => response.json())
       .then(data => {
-        // Aquí puedes manejar la respuesta del servidor. `data` es el objeto de respuesta.
-        // Por ejemplo, puedes verificar si la solicitud fue exitosa y navegar a otra pantalla si lo fue.
-        console.log('datos', data);
-     // Comprueba si el correo electrónico y la contraseña son los mismos que los enviados.
         if (data.usuario.email === correo && data.usuario.password === contraseña) {
-          console.log('El correo electrónico y la contraseña coinciden con los enviados.');
           navigation.navigate('NavigationBar');
         } else {
           console.log('El correo electrónico y la contraseña devueltos no coinciden con los enviados.');
         }
       })
       .catch(error => {
-        // Aquí puedes manejar cualquier error que ocurra durante la solicitud.
         console.error('Error en el JSON:', error);
       });
   };
-
-
-
 
   const handleRegisterModal = () => {
     setModalVisible(true);
@@ -105,7 +95,7 @@ const LoginScreen = () => {
           </View>
           <Text style={styles.title}>APP</Text>
 
-          <View style={[styles.inputContainer, styles.inputWithElevation]}>
+          <View style={styles.inputContainer}>
             <Icon name="envelope" size={20} color="white" style={styles.inputIcon} />
             <TextInput
               placeholder="Correo"
@@ -116,7 +106,7 @@ const LoginScreen = () => {
             />
           </View>
 
-          <View style={[styles.inputContainer]}>
+          <View style={styles.inputContainer}>
             <Icon name="lock" size={20} color="white" style={styles.inputIcon} />
             <TextInput
               placeholder="Contraseña"
@@ -139,29 +129,17 @@ const LoginScreen = () => {
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.loginButton,
-              isButtonInverted ? { backgroundColor: '#46b41e' } : { backgroundColor: 'white' },
-              styles.buttonWithElevation,
-            ]}
+            style={styles.loginButton}
             onPress={handleLogin}
             activeOpacity={0.7}
           >
-            <Text
-              style={[
-                styles.loginButtonText,
-                isButtonInverted ? { color: 'white' } : { color: '#46b41e' },
-              ]}
-            >
-              Iniciar Sesión
-            </Text>
+            <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={handleRegisterModal}>
             <Text style={styles.registerText}>Registrarse</Text>
           </TouchableOpacity>
 
-          {/* Mostrar el RegistroModal si isModalVisible es true */}
           <RegistroModal
             visible={isModalVisible}
             onClose={() => setModalVisible(false)}
