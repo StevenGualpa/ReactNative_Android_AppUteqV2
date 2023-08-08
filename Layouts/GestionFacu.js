@@ -2,22 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Alert } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import EditFacultadModal from './EditFacultad';
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
 const cardWidth = width - 75;
 
-const CarreraItem = ({ nombre, descripcion, imagenURL }) => {
-  return (
-    <View style={styles.carreraItem}>
-      <Text style={styles.carreraTitle}>{nombre}</Text>
-      <Text style={styles.carreraDescription}>{descripcion}</Text>
-      {/* Puedes mostrar la imagen de la carrera aquí utilizando la URL de la imagen */}
-    </View>
-  );
-};
+const FacultadCard = ({ id, nombre, mision, vision, urlVideo, urlFacebook, urlSitioWeb, carreras, onSave }) => {
 
-const FacultadCard = ({ id, nombre, mision, vision, carreras, onSave }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleDelete = async () => {
@@ -33,9 +25,16 @@ const FacultadCard = ({ id, nombre, mision, vision, carreras, onSave }) => {
         {
           text: 'Eliminar',
           onPress: async () => {
-            // Aquí puedes implementar la lógica para eliminar la facultad
-            // Por ejemplo, podrías hacer una solicitud DELETE a la API para eliminar la facultad
-            onDelete(id);
+            try {
+              // Hacer la solicitud DELETE al webservice con el ID de la facultad
+              const response = await axios.delete(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/facultades/delete/${id}`);
+              Alert.alert('Información','La facultad se a eliminado con exito');
+
+              // Aquí podrías realizar acciones adicionales después de eliminar la facultad, si es necesario
+            } catch (error) {
+              console.error('Error al eliminar la facultad:', error);
+              Alert.alert('Error', 'Ha ocurrido un error al eliminar la facultad.');
+            }
           },
         },
       ]
@@ -43,8 +42,6 @@ const FacultadCard = ({ id, nombre, mision, vision, carreras, onSave }) => {
   };
 
   const handleSave = async (editedFacultad) => {
-    // Aquí puedes implementar la lógica para guardar los cambios en la facultad
-    // Por ejemplo, podrías hacer una solicitud POST a la API para actualizar la facultad
     console.log('Facultad editada:', editedFacultad);
   };
 
@@ -70,6 +67,9 @@ const FacultadCard = ({ id, nombre, mision, vision, carreras, onSave }) => {
           nombre: nombre,
           mision: mision,
           vision: vision,
+          urlVideo: urlVideo,
+          urlFacebook: urlFacebook,
+          urlSitioWeb: urlSitioWeb,
           carreras: carreras,
         }}
       />
@@ -107,14 +107,17 @@ const GestiFacu = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {facultades.map((facultad) => (
           <FacultadCard
-            key={facultad.ID}
-            id={facultad.ID}
-            nombre={facultad.nombre}
-            mision={facultad.mision}
-            vision={facultad.vision}
-            carreras={[]} // Aquí pasamos las carreras correspondientes a la facultad desde la API
-            onSave={handleFacultadSave}
-          />
+          key={facultad.ID}
+          id={facultad.ID}
+          nombre={facultad.nombre}
+          mision={facultad.mision}
+          vision={facultad.vision}
+          urlVideo={facultad.urlVideo}
+          urlFacebook={facultad.urlFacebook}
+          urlSitioWeb={facultad.UrlSitio}
+          carreras={[]} // Aquí pasamos las carreras correspondientes a la facultad desde la API
+          onSave={handleFacultadSave}
+        />
         ))}
       </ScrollView>
     </View>

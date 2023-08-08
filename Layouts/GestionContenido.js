@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Modal, TextInput, ActivityIndicator,RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Modal, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
-import 'moment/locale/es'; 
+import 'moment/locale/es';
 moment.locale('es');
-const ContentCard = ({ id, title, description, fecha,url,url_imagen, onPressEdit, onDelete }) => {
+const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen, onPressEdit, onDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedDescription, setEditedDescription] = useState(description);
@@ -15,7 +13,7 @@ const ContentCard = ({ id, title, description, fecha,url,url_imagen, onPressEdit
   const [originalTitle, setOriginalTitle] = useState(title);
   const [originalDescription, setOriginalDescription] = useState(description);
   const [originalUrl, setOriginalUrl] = useState(url);
-  const [originakima, setOriginalima]=useState(url_imagen);
+  const [originakima, setOriginalima] = useState(url_imagen);
 
 
   // Función para manejar la acción de editar contenido
@@ -26,8 +24,35 @@ const ContentCard = ({ id, title, description, fecha,url,url_imagen, onPressEdit
   // Función para manejar la acción de guardar los cambios al editar contenido
   const handleSave = async () => {
     // Validar campos vacíos y URL válida
-    if (!editedTitle.trim() || !editedDescription.trim() || !isValidUrl(editedUrl) || !editeUrlima.trim() ) {
+    if (!editedTitle.trim() || !editedDescription.trim() || !isValidUrl(editedUrl) || !isValidUrl(editeUrlima)) {
       Alert.alert('Error', 'Por favor, complete todos los campos y asegúrese de ingresar una URL válida.');
+      return;
+    }
+    const currentContentType = contenido;
+
+    // Validar las URLs según el tipo de contenido
+    if (currentContentType === 'Tiktok') {
+      const tiktokRegex = /^(?:https?:\/\/)?(?:www\.)?vm\.tiktok\.com\/[a-zA-Z0-9_-]+\/$/i;
+      if (!tiktokRegex.test(editedUrl)) {
+        Alert.alert('URL inválida', 'Por favor, ingresa una URL válida de TikTok.');
+        return;
+      }
+    } else if (currentContentType === 'Youtube') {
+      const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?.*v=.+|youtu\.be\/.+)$/i;
+      if (!youtubeRegex.test(editedUrl)) {
+        Alert.alert('URL inválida', 'Por favor, ingresa una URL válida de YouTube.');
+        return;
+      }
+    }
+    // Validar la existencia de las URLs
+    const videoUrlExists = await validateURLExistence(editedUrl);
+    if (!videoUrlExists) {
+      Alert.alert('URL no encontrada', 'La URL de video no existe o no está disponible.');
+      return;
+    }
+    const imageUrlExists = await validateURLExistence(editeUrlima);
+    if (!imageUrlExists) {
+      Alert.alert('URL no encontrada', 'La URL de imagen no existe o no está disponible.');
       return;
     }
 
@@ -57,6 +82,7 @@ const ContentCard = ({ id, title, description, fecha,url,url_imagen, onPressEdit
                 url_video: editedUrl,
                 url_imageb: editeUrlima,
                 usuario_id: 1,
+                tipo_contenido: contenido,
               };
               // Actualizar el documento con los datos editados
               await fetch(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/multimedia/update/${id}`, {
@@ -115,16 +141,26 @@ const ContentCard = ({ id, title, description, fecha,url,url_imagen, onPressEdit
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
     return urlRegex.test(value);
   };
- 
+
+  const validateURLExistence = async (url) => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch (error) {
+      console.error('Error al validar URL:', error);
+      return false;
+    }
+  };
+
 
   // Restringir la descripción a un máximo de 50 caracteres para mostrar en la tarjeta
   const truncatedDescription = description.length > 50 ? `${description.substring(0, 50)}...` : description;
 
   return (
-    
+
     <View style={styles.card}>
       <View style={styles.imageContainer}>
-      <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{title}</Text>
         <Image source={{ uri: editeUrlima }} style={styles.logo} />
       </View>
       <Text style={styles.fecha}>{moment(fecha).format('LL')}</Text>
@@ -218,6 +254,7 @@ const AppGestion = () => {
             descripcion: item.descripcion,
             url: item.url_video,
             url_imagen: item.url_imageb,
+            contenido: item.tipo_contenido,
           }))
         )
       )
@@ -266,21 +303,22 @@ const AppGestion = () => {
       {loading ? (
         <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
       ) : (
-      <ScrollView  refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        {contentData.map((content) => (
-          <ContentCard
-            key={content.id}
-            id={content.id}
-            title={content.titulo}
-            fecha={content.UpdatedAt}
-            description={content.descripcion}
-            url={content.url}
-            url_imagen={content.url_imagen}
-            onPressEdit={handleEditContent}
-            onDelete={handleDeleteContent}
-          />
-        ))}
-      </ScrollView>
+        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+          {contentData.map((content) => (
+            <ContentCard
+              key={content.id}
+              id={content.id}
+              title={content.titulo}
+              fecha={content.UpdatedAt}
+              description={content.descripcion}
+              url={content.url}
+              url_imagen={content.url_imagen}
+              contenido={content.contenido}
+              onPressEdit={handleEditContent}
+              onDelete={handleDeleteContent}
+            />
+          ))}
+        </ScrollView>
       )}
     </View>
   );
@@ -318,15 +356,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   logo: {
-    width: 120, // Ajusta el ancho de la imagen según tu preferencia
-    height: 150, // Ajusta el alto de la imagen según tu preferencia
+
+    width: 106, // Ajusta el ancho de la imagen según tu preferencia
+    height: 104, // Ajusta el alto de la imagen según tu preferencia
     borderRadius: 10,
+    borderRadius: 10,
+    resizeMode: 'stretch',
   },
   contentContainer: {
     flex: 1,
   },
   title: {
-    marginBottom:12,
+    marginBottom: 12,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -335,9 +376,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'black',
   },
-  fecha:{textAlign:'center',
-  marginBottom:6,
-  marginTop:4},
+  fecha: {
+    textAlign: 'center',
+    marginBottom: 6,
+    marginTop: 4
+  },
 
   buttonContainer: {
     flexDirection: 'row',
@@ -404,7 +447,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     marginTop: 10,
-    width:150,
+    width: 150,
     justifyContent: 'center',
     flexDirection: 'row',
   },

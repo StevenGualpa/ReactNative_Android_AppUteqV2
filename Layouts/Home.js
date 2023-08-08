@@ -18,7 +18,7 @@ const Home = () => {
   const [noticeData, setnoticeData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const blockBackButton = () => {
+ /* const blockBackButton = () => {
     Alert.alert(
       "Confirmar salida",
       "¿Estás seguro de que quieres salir de la aplicación?",
@@ -39,7 +39,7 @@ const Home = () => {
         BackHandler.removeEventListener('hardwareBackPress', blockBackButton);
       };
     }, [])
-  );
+  );*/
 
   // Función para obtener los contenidos desde heroku
   useEffect(() => {
@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
   contentImage: {
     width: 100,
     height: 100,
+    resizeMode: 'contain'
   },
   title: {
     marginTop: 5,

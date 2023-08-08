@@ -18,9 +18,12 @@ import App from "./CrearFacultad";
 import AppUsuario from "./CrearUsuario";
 import AppGestion from "./GestionContenido";
 import FacultadCard from "./GestionFacu";
-import ProfileCard from "./GestionesUsusario";
+import AppUser from "./GestionesUsusario";
 import ProfileScreen from "./Perfil";
 import FacuDetails from "./Mostrarfacultad";
+import CrearCarreras from "./CrearCarreras";
+import GestionCarreras from "./GestionCarreras";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -103,7 +106,21 @@ function Chatboxito() {
       />
       <stack2.Screen
         name="UserG"
-        component={ProfileCard}
+        component={AppUser}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack2.Screen
+        name="Carreras"
+        component={CrearCarreras}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <stack2.Screen
+        name="CarrerasG"
+        component={GestionCarreras}
         options={{
           headerShown: false,
         }}
@@ -226,7 +243,6 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator headerMode="none">
-      <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="NavigationBar" component={MyTabs} />
 
       </Stack.Navigator>

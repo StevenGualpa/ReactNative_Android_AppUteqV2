@@ -1,8 +1,6 @@
 
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native';
-import ImagePicker from 'react-native-image-picker';
-import { Ionicons } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
 
 export function Contenido() {
@@ -15,7 +13,23 @@ export function Contenido() {
   const [url_video, seturl_video] = useState('');
   const [url_imageb, seturl_imageb] = useState('');
   const [selectedType, setSelectedType] = useState('Tiktok');
-  
+  const [isOn, setIsOn] = useState(false);
+
+  const handleToggleSwitch = () => {
+    setIsOn((prevIsOn) => !prevIsOn);
+  if (!isOn) {
+    if (selectedType === 'Youtube') {
+      // Si el switch se activa en el radio botón de Youtube, establecer una URL de video de Youtube
+      seturl_imageb('https://cdn-icons-png.flaticon.com/512/174/174883.png'); 
+    } else if (selectedType === 'Tiktok') {
+      // Si el switch se activa en el radio botón de Tiktok, establecer una URL de imagen de Tiktok
+      seturl_imageb('https://www.pnguniverse.com/wp-content/uploads/2020/10/Tik-Tok-con-fondo.png');
+    }
+  } else {
+    // Si el switch se desactiva, limpiar el valor de url_imageb
+    seturl_imageb('');
+  }
+  };
   const handleRadioButtonPress = (type) => {
     setSelectedType(type);
     // Limpiar los campos del otro radio botón
@@ -24,11 +38,13 @@ export function Contenido() {
       setDescripcion('');
       seturl_video('');
       seturl_imageb('');
+      setIsOn(false);
     } else if (type === 'Youtube') {
       setTitulo('');
       setDescripcion('');
       seturl_video('');
       seturl_imageb('');
+      setIsOn(false);
     }
   };
 
@@ -48,28 +64,43 @@ export function Contenido() {
       ]);
       return;
     }
-
+    if (selectedType === 'Tiktok') {
+      const tiktokRegex = /^(?:https?:\/\/)?(?:www\.)?vm\.tiktok\.com\/[a-zA-Z0-9_-]+\/$/i;
+      if (!tiktokRegex.test(url_video)) {
+        Alert.alert('URL inválida', 'Por favor, ingresa una URL válida de TikTok.');
+        urlRef.current?.focus();
+        return;
+      }
+    } else if (selectedType === 'Youtube') {
+      const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?.*v=.+|youtu\.be\/.+)$/i;
+      if (!youtubeRegex.test(url_video)) {
+        Alert.alert('URL inválida', 'Por favor, ingresa una URL válida de YouTube.');
+        urlRef.current?.focus();
+        return;
+      }
+    }
+    
 
     if (!validateURL(url_video)) {
       Alert.alert('URL inválida', 'Por favor, ingresa una URL válida.');
       urlRef.current?.focus();
       return;
     }
-    
-   
+
+
     const videoUrlExists = await validateURLExistence(url_video);
     if (!videoUrlExists) {
       Alert.alert('URL no encontrada', 'La URL  no existe o no está disponible.');
       urlRef.current?.focus();
       return;
     }
-    /*const imagenUrlExists = await validateURLExistence(url_imageb);
+    const imagenUrlExists = await validateURLExistence(url_imageb);
     if (!imagenUrlExists) {
       Alert.alert('URL no encontrada', 'La URL  no existe o no está disponible.');
       urlRef.current?.focus();
       return;
-    }*/
-    
+    }
+
 
     try {
       const nuevoContenido = {
@@ -101,6 +132,7 @@ export function Contenido() {
               setDescripcion('');
               seturl_video('');
               seturl_imageb('');
+              setIsOn(false);
 
             },
           },
@@ -110,13 +142,13 @@ export function Contenido() {
     } catch (error) {
       console.error('Error al guardar los datos:', error);
     }
-  
+
   };
   const validateURL = (url_video) => {
     const regex = /^(ftp|http|https):\/\/[^ "]+$/;
     return regex.test(url_video);
   };
- 
+
   const validateURLExistence = async (url) => {
     try {
       const response = await fetch(url, { method: 'HEAD' });
@@ -126,7 +158,7 @@ export function Contenido() {
       return false;
     }
   };
-  
+
   const tikYou = () => {
     if (selectedType == 'Tiktok') {
       return (
@@ -161,7 +193,7 @@ export function Contenido() {
                 style={styles.textBoxUrl}
                 value={url_video}
                 onChangeText={seturl_video}
-                
+
               />
             </View>
             <Text style={styles.label}>Imagen</Text>
@@ -171,51 +203,58 @@ export function Contenido() {
                 style={styles.textBoxurl_imageb}
                 ref={url_imagebRef}
                 value={url_imageb}
-                
                 onChangeText={seturl_imageb}
-                 
               />
             </View>
-        </View >
+            <View style={styles.containerStch}>
+      <TouchableOpacity
+        style={[styles.switchContainer, isOn ? styles.switchOn : styles.switchOff]}
+        onPress={handleToggleSwitch}
+      >
+        <View style={isOn ? styles.toggleOn : styles.toggleOff} />
+      </TouchableOpacity>
+      <Text style={styles.text}>Icono de Tiktok</Text>
+    </View>
+          </View >
         </>
       );
-}
+    }
     else if (selectedType == 'Youtube') {
-  return (
-    <>
-      <View style={styles.contentContainer}>
-        <Text style={styles.label}>Titulo</Text>
-        <View style={styles.textBoxContainer}>
-          <TextInput
-            placeholder="Ingrese el titulo"
-            ref={tituloRef}
-            style={styles.textBox}
-            value={titulo}
-            onChangeText={setTitulo}
-          />
-        </View>
-        <Text style={styles.label}>Descripción</Text>
-        <View style={styles.textBoxContainer}>
-          <TextInput
-            placeholder="Ingrese descripcion"
-            ref={descripcionRef}
-            multiline
-            style={styles.textBoxDescri}
-            value={descripcion}
-            onChangeText={setDescripcion}
-          />
-        </View>
-        <Text style={styles.label}>Url</Text>
-        <View style={styles.textBoxContainer}>
-          <TextInput
-            placeholder="Ingrese el Url"
-            ref={urlRef}
-            style={styles.textBoxUrl}
-            value={url_video}
-            onChangeText={seturl_video}
-          />
-        </View>
-       <Text style={styles.label}>Imagen</Text>
+      return (
+        <>
+          <View style={styles.contentContainer}>
+            <Text style={styles.label}>Titulo</Text>
+            <View style={styles.textBoxContainer}>
+              <TextInput
+                placeholder="Ingrese el titulo"
+                ref={tituloRef}
+                style={styles.textBox}
+                value={titulo}
+                onChangeText={setTitulo}
+              />
+            </View>
+            <Text style={styles.label}>Descripción</Text>
+            <View style={styles.textBoxContainer}>
+              <TextInput
+                placeholder="Ingrese descripcion"
+                ref={descripcionRef}
+                multiline
+                style={styles.textBoxDescri}
+                value={descripcion}
+                onChangeText={setDescripcion}
+              />
+            </View>
+            <Text style={styles.label}>Url</Text>
+            <View style={styles.textBoxContainer}>
+              <TextInput
+                placeholder="Ingrese el Url"
+                ref={urlRef}
+                style={styles.textBoxUrl}
+                value={url_video}
+                onChangeText={seturl_video}
+              />
+            </View>
+            <Text style={styles.label}>Imagen</Text>
             <View style={styles.textBoxContainer}>
               <TextInput
                 placeholder='Ingrese el URL de la imagen'
@@ -223,43 +262,51 @@ export function Contenido() {
                 ref={url_imagebRef}
                 value={url_imageb}
                 onChangeText={seturl_imageb}
-                 
               />
             </View>
-      </View>
-    </>
+            <View style={styles.containerStch}>
+      <TouchableOpacity
+        style={[styles.switchContainer, isOn ? styles.switchOn : styles.switchOff]}
+        onPress={handleToggleSwitch}
+      >
+        <View style={isOn ? styles.toggleOn : styles.toggleOff} />
+      </TouchableOpacity>
+      <Text style={styles.text}>Icono de Youtube</Text>
+    </View>
+          </View>
+        </>
 
-  );
-}
+      );
+    }
   }
 
-return (
-  <ScrollView contentContainerStyle={styles.container}>
-    <View id="Encabezado" style={styles.container2}>
-      <Text style={styles.tituloTexto}>Contenido</Text>
-    </View>
-    <View style={styles.radioContainer}>
-      <TouchableOpacity
-        style={[styles.radio, selectedType === 'Tiktok' && styles.radioSelected]}
-        onPress={() => handleRadioButtonPress('Tiktok')}
-      >
-        {selectedType === 'Tiktok' && <View style={styles.radioInner} />}
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View id="Encabezado" style={styles.container2}>
+        <Text style={styles.tituloTexto}>Contenido</Text>
+      </View>
+      <View style={styles.radioContainer}>
+        <TouchableOpacity
+          style={[styles.radio, selectedType === 'Tiktok' && styles.radioSelected]}
+          onPress={() => handleRadioButtonPress('Tiktok')}
+        >
+          {selectedType === 'Tiktok' && <View style={styles.radioInner} />}
+        </TouchableOpacity>
+        <Text style={styles.radioLabel}>Tiktok</Text>
+        <TouchableOpacity
+          style={[styles.radio, selectedType === 'Youtube' && styles.radioSelected]}
+          onPress={() => handleRadioButtonPress('Youtube')}
+        >
+          {selectedType === 'Youtube' && <View style={styles.radioInner} />}
+        </TouchableOpacity>
+        <Text style={styles.radioLabel}>Youtube</Text>
+      </View>
+      {tikYou()}
+      <TouchableOpacity style={styles.publicarButton} onPress={handlePublicar}>
+        <Text style={styles.publicarButtonText}>Publicar</Text>
       </TouchableOpacity>
-      <Text style={styles.radioLabel}>Tiktok</Text>
-      <TouchableOpacity
-        style={[styles.radio, selectedType === 'Youtube' && styles.radioSelected]}
-        onPress={() => handleRadioButtonPress('Youtube')}
-      >
-        {selectedType === 'Youtube' && <View style={styles.radioInner} />}
-      </TouchableOpacity>
-      <Text style={styles.radioLabel}>Youtube</Text>
-    </View>
-    {tikYou()}
-    <TouchableOpacity style={styles.publicarButton} onPress={handlePublicar}>
-      <Text style={styles.publicarButtonText}>Publicar</Text>
-    </TouchableOpacity>
-  </ScrollView>
-);
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -388,7 +435,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     marginTop: 10,
-    width:150,
+    width: 150,
     justifyContent: 'center',
     flexDirection: 'row',
   },
@@ -398,8 +445,46 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  uploadIcon: {
-    marginRight: 8,
+  containerStch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 19,
+  },
+  text: {
+    fontSize: 16,
+    marginLeft: 6,
+  },
+  switchContainer: {
+    width: 60,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#ddd',
+    paddingHorizontal: 2,
+  },
+  switchOn: {
+    backgroundColor: '#46b41e',
+  },
+  switchOff: {
+    backgroundColor: '#ddd',
+  },
+  toggleOn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: 'white',
+    alignSelf: 'flex-end',
+    margin: 2,
+  },
+  toggleOff: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: 'white',
+    alignSelf: 'flex-start',
+    margin: 2,
   },
 });
 

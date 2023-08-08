@@ -96,9 +96,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   logo: {
-      width: 120, // Ajusta el ancho de la imagen según tu preferencia
-      height: 150, // Ajusta el alto de la imagen según tu preferencia
+      width: 106, // Ajusta el ancho de la imagen según tu preferencia
+      height: 104, // Ajusta el alto de la imagen según tu preferencia
       borderRadius: 10,
+    
+      resizeMode: 'stretch',
       marginTop:7,
   },
   title: {
@@ -136,7 +138,9 @@ const styles = StyleSheet.create({
   loadingIndicator: {
     marginTop: 20,
   },
-  fecha:{textAlign:'center',
+  fecha:
+  {
+    textAlign:'center',
   marginBottom:6,
   marginTop:4},
 });
