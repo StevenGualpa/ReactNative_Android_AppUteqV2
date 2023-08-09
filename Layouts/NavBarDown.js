@@ -243,6 +243,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator headerMode="none">
+      <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="NavigationBar" component={MyTabs} />
 
       </Stack.Navigator>

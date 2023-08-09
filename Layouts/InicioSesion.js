@@ -10,11 +10,14 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
+  visible,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RegistroModal from './ModalRegister';
 import { useNavigation } from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
+import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la ruta si es necesario
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,6 +28,10 @@ const LoginScreen = () => {
   const [contraseña, setContraseña] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [verificationModalVisible, setVerificationModalVisible] = useState(false);
+  const [userID, setUserID] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Obtener el token del dispositivo
   useEffect(() => {
@@ -59,11 +66,18 @@ const LoginScreen = () => {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.usuario.email === correo && data.usuario.password === contraseña) {
-          navigation.navigate('NavigationBar');
-        } else {
-          console.log('El correo electrónico y la contraseña devueltos no coinciden con los enviados.');
-        }
+
+        if (data.usuario.verificado === false) {
+          setUserID(data.usuario.ID); // Guardar el ID del usuario
+          setVerificationModalVisible(true); // Mostrar el modal de verificación
+        } 
+        else {
+          if (data.usuario.email === correo && data.usuario.password === contraseña) {
+            navigation.navigate('NavigationBar');
+          } else {
+            console.log('El correo electrónico y la contraseña devueltos no coinciden con los enviados.');
+          }
+        }       
       })
       .catch(error => {
         console.error('Error en el JSON:', error);
@@ -77,6 +91,43 @@ const LoginScreen = () => {
   const handleRegister = (email, type) => {
     setModalVisible(false);
   };
+
+  const handleVerification = (code) => {
+    fetch(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/verifyUser/${userID}/${code}`, {
+      method: 'PUT',
+    })
+      .then(response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          return response.json();
+        } else {
+          throw new Error('Respuesta no JSON: ' + response.statusText);
+        }
+      })
+      .then(data => {
+        if (data.message === "Cuenta verificada") {
+          Alert.alert('Verificación exitosa', 'Usuario verificado exitosamente');
+          setVerificationModalVisible(false);
+          navigation.navigate('NavigationBar');
+        } else if (data.error === "El código ha expirado") {
+          Alert.alert('Verificación fallida', 'El código de verificación ha expirado');
+        } 
+        else if (data.error === "El código ha expirado, se ha generado uno nuevo") {
+        Alert.alert('Verificación fallida', 'El código de verificación ha expirado');
+      }
+        else {
+          Alert.alert('Verificación fallida', 'El código de verificación no es correcto');
+        }
+        
+      })
+      .catch(error => {
+        console.error('Error en la verificación:', error);
+        Alert.alert('Error', 'Ocurrió un error durante la verificación. Por favor, inténtalo de nuevo más tarde.');
+      });
+  };
+  
+  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -147,6 +198,14 @@ const LoginScreen = () => {
           />
         </ImageBackground>
       </ScrollView>
+
+
+      <VerificationModal
+        visible={verificationModalVisible}
+        onVerify={handleVerification}
+        onClose={() => setVerificationModalVisible(false)}
+        errorMessage={errorMessage}
+      />
     </SafeAreaView>
   );
 };
