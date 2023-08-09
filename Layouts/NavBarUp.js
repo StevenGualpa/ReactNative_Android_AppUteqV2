@@ -48,7 +48,6 @@
     const [facultades, setFacultades] = useState([]);
     const [selectedFacultad, setSelectedFacultad] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [noResultsFound, setNoResultsFound] = useState(false); // Variable de estado para controlar si no se encontraron resultados
     const [showFacuDetails, setShowFacuDetails] = useState(false);
 
     const fetchFacultades = async () => {
@@ -65,28 +64,10 @@
   
       const interval = setInterval(() => {
         fetchFacultades(); // Llamada a la API cada 5 minutos (300000 milisegundos)
-      }, 300000); // Intervalo de 5 minutos en milisegundos
+      }, 3000); // Intervalo de 5 minutos en milisegundos
   
       return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
     }, []);
-
-    const [carreras, setCarreras] = useState([]);
-
-    const fetchCarreras = async (facultadId) => {
-      try {
-        const response = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/carreras/getall?facultadId=${facultadId}`);
-        const carrerasData = response.data.carreras.map((carrera) => ({
-          id: carrera.id,
-          nombre: carrera.nombre,
-          descripcion: carrera.descripcion,
-          urlImagen: carrera.urlImagen, // Agregar la propiedad urlImagen
-        }));
-        console.log('Carreras:', carrerasData); // Mostrar las carreras en el log
-        setCarreras(carrerasData);
-      } catch (error) {
-        console.error('Error al obtener las carreras:', error);
-      }
-    };
     const handlelinkview = (link) => {
       Linking.openURL(link);
     };
@@ -94,22 +75,39 @@
       if (!searchText.trim()) {
         return;
       }
-
+    
       console.log('Buscar:', searchText);
+    
       // Cerrar cualquier modal abierto antes de abrir el modal de búsqueda de resultados
       setIsModalOpen(false);
-
-      // Simulación de búsqueda con datos de ejemplo
+    
       try {
-        const response = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Revistas');
-        setSearchResults(response.data);
+        // Realizar la búsqueda en el endpoint de revistas
+        const revistasResponse = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Revistas');
+        const revistasResults = revistasResponse.data.filter(item =>
+          item.Titulo && item.Titulo.toLowerCase().includes(searchText.toLowerCase()) // Verificar que "Titulo" existe antes de acceder a él
+        );
+    
+        // Realizar la búsqueda en el endpoint de noticias
+        const noticiasResponse = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Noticias');
+        const noticiasResults = noticiasResponse.data.filter(item =>
+          item.Titulo && item.Titulo.toLowerCase().includes(searchText.toLowerCase()) // Verificar que "title" existe antes de acceder a él
+        );
+    
+        // Combinar los resultados de ambas búsquedas
+        const combinedResults = [...revistasResults, ...noticiasResults];
+    
+        setSearchResults(combinedResults);
         setIsSearchModalOpen(true);
         setIsModalOpen(true); // Abrir el modal de búsqueda de resultados
-
+    
       } catch (error) {
         console.error('Error al realizar la búsqueda:', error);
       }
     };
+    
+    
+    
 
     const handleMenu = () => {
       setIsMenuOpen(!isMenuOpen);
@@ -126,7 +124,6 @@
       setSelectedFacultad(facultad);
       setIsMenuOpen(false);
       setShowFacuDetails(true);
-      fetchCarreras(facultad.id); // Obtener carreras relacionadas a la facultad seleccionada
       
     };
     const handleGoBack = () => {
@@ -144,7 +141,7 @@
     const renderModalContent = () => {
       if (showFacuDetails && selectedFacultad) {
         return (
-          <FacuDetails facultad={selectedFacultad} onGoBack={handleGoBack} /> 
+          <FacuDetails facultad={selectedFacultad} onGoBack={handleGoBack} />       
         );
       }
       else if (searchResults.length === 0) {
@@ -329,6 +326,7 @@
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      padding:10
     },
     closeSearchModalButton: {
       position: 'absolute',
@@ -339,13 +337,13 @@
     searchResultsContainer: {
       backgroundColor: '#ffffff',
       borderRadius: 10,
-      padding: 20,
+      padding: 25,
       width: width * 0.95,
       maxHeight: height * 0.8,
     },
     searchResultItem: {
       fontSize: 18,
-      marginBottom: 10,
+      padding:10,
     },
     modalContainer: {
       flex: 1,
@@ -428,10 +426,6 @@
       alignItems: 'center',
       justifyContent: 'center',
     },
-    searchResultItemContainer: {
-      marginBottom: 20,
-      alignItems: 'center',
-    },
     searchResultImage: {
       width: 200,
       height: 200,
@@ -458,13 +452,16 @@
     searchResultCard: {
       backgroundColor: '#ffffff',
       borderRadius: 10,
-      padding: 20,
-      marginBottom: 10,
+      padding:5,
+      margin:1,
+      marginBottom:15,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
       elevation: 5,
+      width:width*0.8
+
     },
     logoContainer: {
       alignItems: 'center',

@@ -12,8 +12,13 @@ export default function App() {
       {
         channelId: "my-channel-id", // Debe ser único
         channelName: "My Channel", // Nombre legible por humanos
+        channelDescription: "A channel to categorize your notifications", // Descripción del canal
+        playSound: true, // Sonido de la notificación
+        soundName: "default", // Nombre del archivo de sonido
+        importance: PushNotification.Importance.HIGH, // Importancia del canal
+        vibration: true, // Vibración de la notificación
       },
-      (created) => console.log(`createChannel returned '${created}'`)
+      (created) => console.log(`createChannel returned '${created}'`) // Se llama si el canal se crea exitosamente
     );
   }, []);
 

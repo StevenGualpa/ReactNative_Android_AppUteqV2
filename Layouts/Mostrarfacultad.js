@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; // Asegúrate de importar useState
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, StyleSheet, Modal, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, StyleSheet, Modal, Image, Linking } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios'; // Asegúrate de importar axios si aún no lo has hecho
@@ -26,7 +26,7 @@ const FacuDetails = ({ facultad, onGoBack }) => {
 
   const fecthCarreras = async () => {
     try {
-      const response = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/carreras/getall?facultadId=${facultad.ID}`);
+      const response = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/carreras/getall/${facultad.ID}`);
       const carrerasData = response.data.carreras.map((carrera) => ({
         id: carrera.id,
         nombre: carrera.nombre,
@@ -69,6 +69,10 @@ const FacuDetails = ({ facultad, onGoBack }) => {
     );
   };
 
+  const handleCarreraURLPress = (url) => {
+    Linking.openURL(url).catch((err) => console.error('Error al abrir la URL:', err));
+  };
+
   const renderVision = () => {
     // Aquí puedes obtener la información de la visión desde donde sea necesario
     return (
@@ -78,6 +82,24 @@ const FacuDetails = ({ facultad, onGoBack }) => {
       </View>
     );
   };
+
+  const handleFacebookPress = () => {
+    if (facultad.urlFacebook) {
+      Linking.openURL(facultad.urlFacebook);
+    }
+  };
+
+  const handleGooglePress = () => {
+    if (facultad.UrlSitio) {
+      Linking.openURL(facultad.UrlSitio);
+    }
+  };
+  
+  const handleGoogleCarrera = () =>{
+    if(selectedCarrera.UrlSitio){
+      Linking.openURL(selectedCarrera.UrlSitio);
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -124,7 +146,16 @@ const FacuDetails = ({ facultad, onGoBack }) => {
       {activeTab === 'mision' && renderMision()}
       {activeTab === 'vision' && renderVision()}
 
-     
+      {/* BOTONES DE GOOGLE Y FACEBOOK */}
+      <View style={styles.socialButtonsContainer}>
+        <TouchableOpacity style={styles.facebookButton} onPress={handleFacebookPress}>
+          <Icon name="logo-facebook" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.googleButton} onPress={handleGooglePress}>
+          <Icon name="logo-google" size={24} color="#F4B400" />
+        </TouchableOpacity>
+      </View>
+
       <Modal
         visible={selectedCarrera !== null}
         transparent={true}
@@ -139,6 +170,11 @@ const FacuDetails = ({ facultad, onGoBack }) => {
                 style={styles.modalImage}
               />
               <Text style={styles.modalDescription}>{selectedCarrera.descripcion}</Text>
+              <View style={styles.socialButtonsContainer}>
+              <TouchableOpacity style={styles.googleButton} onPress={handleGoogleCarrera}>
+                <Icon name="logo-google" size={24} color="#F4B400" />
+              </TouchableOpacity>
+              </View>
               <TouchableOpacity
                 style={styles.modalCloseButton}
                 onPress={() => setSelectedCarrera(null)}
@@ -160,7 +196,7 @@ const FacuDetails = ({ facultad, onGoBack }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding:10
   },
   facultyTitle: {
     fontSize: 24,
@@ -271,6 +307,33 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 8,
     marginBottom: 10,
+  },
+  socialButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    margin:5,
+    padding:15
+  },
+  facebookButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginHorizontal: 10, // Espacio entre los botones
+    backgroundColor: '#3b5998', // Color de fondo de Facebook
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  googleButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginHorizontal: 10, // Espacio entre los botones
+    backgroundColor: '#FFFFFF', // Color de fondo de Google
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4285F4', // Color del borde del botón de Google
+    elevation: 3, // Sombra para darle un efecto flotante
   },
 });
 
