@@ -109,22 +109,20 @@ const LoginScreen = () => {
           Alert.alert('Verificación exitosa', 'Usuario verificado exitosamente');
           setVerificationModalVisible(false);
           navigation.navigate('NavigationBar');
-        } else if (data.error === "El código ha expirado") {
-          Alert.alert('Verificación fallida', 'El código de verificación ha expirado');
-        } 
-        else if (data.error === "El código ha expirado, se ha generado uno nuevo") {
-        Alert.alert('Verificación fallida', 'El código de verificación ha expirado');
-      }
-        else {
+        } else if (data.message === "Código caducado. Se ha generado un nuevo código.") {
+          Alert.alert('Verificación fallida', 'El código de verificación ha expirado. Se ha generado uno nuevo.');
+        } else if (data.error === "El código de verificación no es correcto") {
           Alert.alert('Verificación fallida', 'El código de verificación no es correcto');
+        } else {
+          Alert.alert('Error desconocido', 'Ocurrió un error inesperado durante la verificación.');
         }
-        
       })
       .catch(error => {
         console.error('Error en la verificación:', error);
         Alert.alert('Error', 'Ocurrió un error durante la verificación. Por favor, inténtalo de nuevo más tarde.');
       });
   };
+  
   
   
 

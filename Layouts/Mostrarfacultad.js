@@ -31,7 +31,8 @@ const FacuDetails = ({ facultad, onGoBack }) => {
         id: carrera.id,
         nombre: carrera.nombre,
         descripcion: carrera.descripcion,
-        imageURL: carrera.imageURL, // Agregar la propiedad urlImagen
+        imageURL: carrera.imageURL,
+        UrlSitioOf: carrera.UrlSitio // Agregar la propiedad urlImagen
       }));
       console.log('Carreras:', carrerasData); // Mostrar las carreras en el log
       setCarreras(carrerasData);
@@ -41,10 +42,10 @@ const FacuDetails = ({ facultad, onGoBack }) => {
   };
   const renderCarreras = () => {
     return (
-      <ScrollView  contentContainerStyle={styles.carrerasContainer}>
+      <ScrollView contentContainerStyle={styles.carrerasContainer}>
         {carrerasData.map((carrera) => (
           <TouchableOpacity
-            key={carrera.id}
+            key={carrera.id} // Aquí está la clave única
             style={styles.carreraCard}
             onPress={() => handleCarreraPress(carrera)}
           >
@@ -56,11 +57,9 @@ const FacuDetails = ({ facultad, onGoBack }) => {
       </ScrollView>
     );
   };
+  
 
   const renderMision = () => {
-    // Aquí puedes obtener la información de la misión desde donde sea necesario
-   
-
     return (
       <View style={styles.tabContent}>
         <Text style={styles.tabTitle}>Misión</Text>
@@ -69,12 +68,8 @@ const FacuDetails = ({ facultad, onGoBack }) => {
     );
   };
 
-  const handleCarreraURLPress = (url) => {
-    Linking.openURL(url).catch((err) => console.error('Error al abrir la URL:', err));
-  };
 
   const renderVision = () => {
-    // Aquí puedes obtener la información de la visión desde donde sea necesario
     return (
       <View style={styles.tabContent}>
         <Text style={styles.tabTitle}>Visión</Text>
@@ -95,11 +90,15 @@ const FacuDetails = ({ facultad, onGoBack }) => {
     }
   };
   
-  const handleGoogleCarrera = () =>{
-    if(selectedCarrera.UrlSitio){
-      Linking.openURL(selectedCarrera.UrlSitio);
+  const handleGoogleCarrera = () => {
+    if (selectedCarrera && selectedCarrera.UrlSitioOf) {
+      Linking.openURL(selectedCarrera.UrlSitioOf).catch((err) =>
+        console.error("Error al abrir la URL de la carrera:", err)
+      );
     }
-  }
+  };
+  
+  
 
   return (
     <ScrollView style={styles.container}>
@@ -223,7 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 15,
   },
   activeTab: {
     backgroundColor: '#46741e',

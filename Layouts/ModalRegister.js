@@ -202,7 +202,7 @@ const RegistroModal = ({ visible, onClose }) => {
 
       //AQUI REGISTRAR COMO INVITADO
       // Realizar el registro público mediante POST al web service
-      const endpoint = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/register';
+      const endpoint = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/registercorreocode';
       const data = {
         nombre,
         apellido,

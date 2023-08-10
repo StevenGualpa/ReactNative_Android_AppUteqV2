@@ -9,17 +9,17 @@ export const BotonContenido = ({ onPress }) => (
     </TouchableOpacity>
   );
 
+  export const BotonCarreras = ({ onPress }) => (
+    <TouchableOpacity style={styles.boton} onPress={onPress}>
+      <Ionicons name="book" size={60} color="#46741e" />
+      <Text style={styles.titulo}>Carreras</Text>
+    </TouchableOpacity>
+  );
+
   export const BotonFacultades = ({ onPress }) => (
     <TouchableOpacity style={styles.boton} onPress={onPress}>
       <Ionicons name="md-school" size={60} color="#46741e" />
       <Text style={styles.titulo}>Facultades</Text>
-    </TouchableOpacity>
-  );
-
-  export const BotonChatBox = ({ onPress }) => (
-    <TouchableOpacity style={styles.boton} onPress={onPress}>
-      <Ionicons name="md-chatbubbles" size={60} color="#46741e" />
-      <Text style={styles.titulo}>ChatBox</Text>
     </TouchableOpacity>
   );
 

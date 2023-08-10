@@ -128,33 +128,16 @@ const Home = () => {
     return (
       <ScrollView horizontal>
         {visibleNews.map((content) => (
-          <View key={content.Titulo} style={styles.cardNoti}>
+          <View key={content.id || content.Titulo} style={styles.cardNoti}>
             <View style={styles.logoContainer}>
               <Image source={{ uri: content.Portada }} style={styles.logo} />
             </View>
             <Text style={styles.title} numberOfLines={2}>{content.Titulo}</Text>
             <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(content.url)}>
-              <Text style={styles.buttonText}>Leer más</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
-    );
-  };
-  // Función para renderizar las tarjetas de noticias
-  const renderMagazineCards = () => {
-    const visibleMagazines = magazineData.slice(0, 5); // Mostrar solo los primeros 5 elementos
-    return (
-      <ScrollView horizontal>
-        {visibleMagazines.map((content) => (
-          <View key={content.Titulo} style={styles.cardRevis}>
-            <View style={styles.logoContainer}>
-              <Image source={{ uri: content.Portada }} style={styles.logoRevis} />
-            </View>
-            <Text style={styles.title} numberOfLines={2}>{content.Titulo}</Text>
-            <Text style={styles.category}>{content.date}</Text>
-            <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(content.url)}>
-              <Text style={styles.buttonText}>Leer más</Text>
+              <View style={styles.buttonContent}>
+                <Icon name="arrow-right" size={16} color="white" style={styles.buttonIcon} />
+                <Text style={styles.buttonText}> Leer más</Text>
+              </View>
             </TouchableOpacity>
           </View>
         ))}
@@ -162,50 +145,81 @@ const Home = () => {
     );
   };
   
+  // Función para renderizar las tarjetas de noticias
+  const renderMagazineCards = () => {
+    const visibleMagazines = magazineData.slice(0, 5); // Mostrar solo los primeros 5 elementos
+    return (
+      <ScrollView horizontal>
+        {visibleMagazines.map((content) => (
+          <View key={content.id || content.Titulo} style={styles.cardRevis}>
+            <View style={styles.logoContainer}>
+              <Image source={{ uri: content.Portada }} style={styles.logoRevis} />
+            </View>
+            <Text style={styles.title} numberOfLines={2}>{content.Titulo}</Text>
+            <Text style={styles.category}>{content.date}</Text>
+            <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(content.url)}>
+              <View style={styles.buttonContent}>
+                <Icon name="arrow-right" size={16} color="white" style={styles.buttonIcon} />
+                <Text style={styles.buttonText}> Leer más</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+  
+  
   // Función para renderizar las tarjetas de contenido
   const renderContentCards = () => {
     const visibleContent = contentData.slice(0, 5); // Mostrar solo los primeros 5 elementos
     return (
       <ScrollView horizontal>
-      {loading ? (
-        <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
-      ) : (
-        visibleContent.map((content) => (
-          <View key={content.id} style={[styles.cardConte, styles.contentCard]}>
-            <View style={styles.contentContainer}>
-              <Image source={{ uri: content.url_imageb }} style={styles.contentImage} />
-              <Text style={styles.titleconte} numberOfLines={1}>{content.titulo}</Text>
-              <Text>{moment(content.UpdatedAt).format('DD MMM YYYY')}</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
+        ) : (
+          visibleContent.map((content) => (
+            <View key={content.id} style={[styles.cardConte, styles.contentCard]}>
+              <View style={styles.contentContainer}>
+                <Image source={{ uri: content.url_imageb }} style={styles.contentImage} />
+                <Text style={styles.titleconte} numberOfLines={1}>{content.titulo}</Text>
+                <Text>{moment(content.UpdatedAt).format('DD MMM YYYY')}</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleButtonPress(content.url_video)}
+              >
+                <View style={styles.buttonContent}>
+                  <Icon name="play-circle" size={24} color="white" />
+                  <Text style={styles.buttonText}> Visualizar</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleButtonPress(content.url_video)}
-            >
-              <Text style={styles.buttonText}>Visualizar</Text>
-            </TouchableOpacity>
-          </View>
-        ))
+          ))
         )}
       </ScrollView>
     );
   };
-
+  
   return (
     <View style={styles.container}>
       <ScrollView
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {/* Secciones del contenido */}
         <TouchableOpacity style={styles.sectionHeader} onPress={() => handleSectionPress('Noticias')}>
+          <Icon name="newspaper-o" size={28} color="#46741e" />
           <Text style={styles.sectionTitle}>Noticias</Text>
         </TouchableOpacity>
         {renderNewsCards()}
 
         <TouchableOpacity style={styles.sectionHeader} onPress={() => handleSectionPress('Revistas')}>
+          <Icon name="book" size={28} color="#46741e" />
           <Text style={styles.sectionTitle}>Revistas</Text>
         </TouchableOpacity>
         {renderMagazineCards()}
 
         <TouchableOpacity style={styles.sectionHeader} onPress={() => handleSectionPress('Contenido')}>
+          <Icon name="film" size={28} color="#46741e" />
           <Text style={styles.sectionTitle}>Contenido</Text>
         </TouchableOpacity>
         {renderContentCards()}
@@ -222,6 +236,7 @@ const Home = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -375,6 +390,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#ffffff',
   },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight:5
+  }  
 });
 
 

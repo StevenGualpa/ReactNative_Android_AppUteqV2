@@ -1,46 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, Dimensions } from 'react-native';
-import { AntDesign } from '@expo/vector-icons'; // Importar los iconos necesarios
+import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const { width } = Dimensions.get('window');
-const cardWidth = width * 0.9; // Ancho de la tarjeta del 90% del ancho de la pantalla
+const cardWidth = width * 0.9;
 
-const NewsCard = ({ image, title, category }) => {
+const NewsCard = ({ image, title, url }) => {
   const handleReadMore = () => {
-    Linking.openURL('https://www.uteq.edu.ec/comunicacion/noticia/convocatoria-a-concurso-de-cortometraje-crear-conciencia-ambiental');
+    Linking.openURL(url);
   };
 
   return (
     <View style={styles.card}>
-      <Image source={image} style={styles.image} />
+      <Image source={{ uri: image }} style={styles.image} resizeMode="stretch" />
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.category}>{category}</Text>
       <TouchableOpacity style={styles.button} onPress={handleReadMore}>
-        <View style={styles.buttonContent}>
-          <Image source={require('./iconos/leer mas.png')} style={styles.buttonIcon} />
-          <Text style={styles.buttonText}>Leer más</Text>
-        </View>
+        <Text style={styles.buttonText}><Icon name="book" size={20} color="#fff" /> Leer más</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-const ViewNotice = () => {
+const ViewRevista = () => {
+  const [revistas, setRevistas] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Revistas')
+      .then((response) => {
+        setRevistas(response.data);
+      })
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Vista de revistas</Text>
+      <Text style={styles.header}>Vista de Revistas</Text>
       <ScrollView>
-        <NewsCard
-          image={require('./iconos/refresh.png')}
-          title="Título de la revista 1"
-          category="Categoría 1"
-        />
-        <NewsCard
-          image={require('./iconos/refresh.png')}
-          title="Título de la revista 2"
-          category="Categoría 2"
-        />
-        {/* Agrega más tarjetas de noticias aquí */}
+        {revistas.map((revista) => (
+          <NewsCard
+            key={revista.Titulo}
+            image={revista.Portada}
+            title={revista.Titulo}
+            url={revista.url}
+          />
+        ))}
       </ScrollView>
     </View>
   );
@@ -50,14 +54,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f6fa', // Cambia el fondo del interfaz a #f5f6fa
+    backgroundColor: '#f5f6fa',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#46741e',
     marginBottom: 20,
-    textAlign: 'center', // Centra el encabezado
+    textAlign: 'center',
   },
   card: {
     backgroundColor: '#fff',
@@ -72,24 +76,18 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    width: cardWidth, // Ancho de la tarjeta
-    alignSelf: 'center', // Centra la tarjeta horizontalmente
+    width: cardWidth,
+    alignSelf: 'center',
   },
   image: {
     width: '100%',
-    height: 200,
+    height: 350,
     borderRadius: 8,
-    marginBottom: 10,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-  },
-  category: {
-    fontSize: 14,
-    color: 'gray',
-    marginBottom: 10,
   },
   button: {
     backgroundColor: '#46741e',
@@ -99,19 +97,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  buttonIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-  },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
 });
 
-export default ViewNotice;
+export default ViewRevista;

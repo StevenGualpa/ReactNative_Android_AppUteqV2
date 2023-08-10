@@ -7,10 +7,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Prefer } from "./Preferencias";
 import LoginScreen from "./InicioSesion";
 import ContentCard from "./VisualizadorContenidos";
-import ViewNotice from "./VisualizarNoticias";
+import ViewNoticias from "./VisualizarNoticias";
 import Home from "./Home";
 import NavigationBar from "./NavBarUp";
 import MenuComple from "./Menu";
+import MenuRespaldo from "./MenuRespaldo";
 import ViewRevista from './VisualizadorRevista'
 import ChatScreen from "./ChatBox";
 import Contenido from "./Contenido";
@@ -24,7 +25,6 @@ import FacuDetails from "./Mostrarfacultad";
 import CrearCarreras from "./CrearCarreras";
 import GestionCarreras from "./GestionCarreras";
 
-
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const stack2 = createStackNavigator();
@@ -33,142 +33,38 @@ const stack3 = createStackNavigator();
 function Perfiles() {
   return (
     <stack3.Navigator>
-      <stack3.Screen
-        name="perfil"
-        component={ProfileScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="out"
-        component={LoginScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-
+      <stack3.Screen name="perfil" component={ProfileScreen} options={{ headerShown: false }} />
+      <stack2.Screen name="out" component={LoginScreen} options={{ headerShown: false }} />
     </stack3.Navigator>
-
   );
 }
+
 function Chatboxito() {
   return (
     <stack2.Navigator>
-      <stack2.Screen
-        name="Menu"
-        component={MenuComple}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="ChatBox"
-        component={ChatScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="Conten"
-        component={Contenido}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="ContenG"
-        component={AppGestion}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="Facul"
-        component={App}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="FaculG"
-        component={FacultadCard}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="User"
-        component={AppUsuario}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="UserG"
-        component={AppUser}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="Carreras"
-        component={CrearCarreras}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="CarrerasG"
-        component={GestionCarreras}
-        options={{
-          headerShown: false,
-        }}
-      />
+        
+      <stack2.Screen name="MenuComple" component={MenuRespaldo} options={{ headerShown: false }} />
+      <stack2.Screen name="Conten" component={Contenido} options={{ headerShown: false }} />
+      <stack2.Screen name="ContenG" component={AppGestion} options={{ headerShown: false }} />
+      <stack2.Screen name="Facul" component={App} options={{ headerShown: false }} />
+      <stack2.Screen name="FaculG" component={FacultadCard} options={{ headerShown: false }} />
+      <stack2.Screen name="User" component={AppUsuario} options={{ headerShown: false }} />
+      <stack2.Screen name="UserG" component={AppUser} options={{ headerShown: false }} />
+      <stack2.Screen name="Carreras" component={CrearCarreras} options={{ headerShown: false }} />
+      <stack2.Screen name="CarrerasG" component={GestionCarreras} options={{ headerShown: false }} />
     </stack2.Navigator>
   );
 }
+
 function HomeStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Noticias"
-        component={ViewNotice}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Revistas"
-        component={ViewRevista}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="Contenido"
-        component={ContentCard}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen
-        name="ChatBoxito"
-        component={ChatScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <stack2.Screen name="facultades"
-      component={FacuDetails}
-      options={{headerShown:false}}/>
+      <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+      <Stack.Screen name="Noticias" component={ViewNoticias} options={{ headerShown: false }} />
+      <Stack.Screen name="Revistas" component={ViewRevista} options={{ headerShown: false }} />
+      <Stack.Screen name="Contenido" component={ContentCard} options={{ headerShown: false }} />
+      <stack2.Screen name="ChatBoxito" component={ChatScreen} options={{ headerShown: false }} />
+      <stack2.Screen name="facultades" component={FacuDetails} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
@@ -178,28 +74,15 @@ function MyTabs() {
     <>
       <NavigationBar />
       <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === "Home") {
-              iconName = focused ? "home" : "home";
-            } else if (route.name === "Preferencias") {
-              iconName = focused ? "gear" : "gear";
-            } else if (route.name === "Menu") {
-              iconName = focused ? "bars" : "bars";
-            }
-            return <Icon name={iconName} size={size} color={color} />;
-          },
-        })}
-        tabBarOptions={{
-          activeTintColor: "#46741e",
-          inactiveTintColor: "#d5d3e0",
+        screenOptions={{
+          tabBarActiveTintColor: "#46741e",
+          tabBarInactiveTintColor: "#d5d3e0",
+          tabBarStyle: [{ display: "flex" }, null],
         }}
       >
         <Tab.Screen
           name="Inicio"
-          component={HomeStack} // Utilizamos el stack que contiene Home, Noticias y ViewRevista
+          component={HomeStack}
           options={{
             headerShown: false,
             tabBarIcon: ({ color }) => (
@@ -212,6 +95,9 @@ function MyTabs() {
           component={Prefer}
           options={{
             headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <Icon name="gear" size={26} color={color} />
+            ),
           }}
         />
         <Tab.Screen
@@ -219,6 +105,9 @@ function MyTabs() {
           component={Chatboxito}
           options={{
             headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <Icon name="bars" size={26} color={color} />
+            ),
           }}
         />
         <Tab.Screen
@@ -231,21 +120,19 @@ function MyTabs() {
             ),
           }}
         />
-
-
       </Tab.Navigator>
     </>
   );
 }
 
+
 export default function Navigation() {
   const userIsAuthenticated = true;
   return (
     <NavigationContainer>
-      <Stack.Navigator headerMode="none">
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="NavigationBar" component={MyTabs} />
-
       </Stack.Navigator>
     </NavigationContainer>
   );

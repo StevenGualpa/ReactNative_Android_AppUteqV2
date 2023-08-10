@@ -24,16 +24,18 @@ const NewsCard = ({ image, title, category, url }) => {
   );
 };
 
-const ViewRevista = () => {
+const ViewNoticias = () => {
   const [noticias, setNoticias] = useState([]);
 
   useEffect(() => {
-    axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias')
+    axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Noticias')
       .then((response) => {
-        setNoticias(response.data.noticias);
+        setNoticias(response.data); // La respuesta ya es un arreglo
       })
       .catch((error) => console.error(error));
   }, []);
+  
+  
 
   return (
     <View style={styles.container}>
@@ -41,16 +43,17 @@ const ViewRevista = () => {
       <ScrollView>
         {noticias.map((noticia) => (
           <NewsCard
-            key={noticia.ID}
-            image={noticia.portada}
-            title={noticia.titulo}
-            category={noticia.tags.map(tag => tag.value).join(", ")}
+            key={noticia.Titulo} // Usar el título como clave
+            image={noticia.Portada}
+            title={noticia.Titulo}
+            category={noticia.date} // O cualquier otra propiedad que desees mostrar
             url={noticia.url}
           />
         ))}
       </ScrollView>
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
@@ -116,4 +119,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewRevista;
+export default ViewNoticias;
