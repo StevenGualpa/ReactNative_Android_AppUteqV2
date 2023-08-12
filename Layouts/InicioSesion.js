@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  SafeAreaView,
+  View,Text,TextInput,TouchableOpacity,ImageBackground,Dimensions,
+  ScrollView,SafeAreaView,
   Alert,
-  visible,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import RegistroModal from './ModalRegister';
 import { useNavigation } from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la ruta si es necesario
-
+import { styles } from './Styles/Styles'; // Ajusta la ruta si es necesario
 
 const { width, height } = Dimensions.get('window');
 
@@ -123,10 +115,6 @@ const LoginScreen = () => {
       });
   };
   
-  
-  
-
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
@@ -207,91 +195,4 @@ const LoginScreen = () => {
     </SafeAreaView>
   );
 };
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backgroundImage: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: width,
-    height: height,
-  },
-  logoContainer: {
-    width: width * 0.7,
-    height: height * 0.13,
-    marginBottom: height * 0.03,
-    alignItems: 'center',
-  },
-  logoImage: {
-    width: '100%',
-    height: '100%',
-  },
-  title: {
-    fontSize: width * 0.1,
-    color: 'white',
-    fontWeight: 'bold',
-    marginTop: height * -0.02,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: 'white',
-    width: width * 0.9,
-    marginTop: height * 0.03,
-  },
-  inputIcon: {
-    marginLeft: width * 0.04,
-    marginRight: width * 0.02,
-  },
-  textInput: {
-    flex: 1,
-    fontSize: width * 0.05,
-    color: 'white',
-    paddingVertical: height * 0.02,
-  },
-  passwordInput: {
-    flex: 1,
-    fontSize: width * 0.05,
-    color: 'white',
-    paddingVertical: height * 0.02,
-  },
-  showPasswordButton: {
-    padding: width * 0.02,
-    marginRight: width * 0.04,
-  },
-  loginButton: {
-    backgroundColor: 'white',
-    paddingVertical: height * 0.02,
-    paddingHorizontal: width * 0.2,
-    borderRadius: width * 0.1,
-    marginTop: height * 0.03,
-  },
-  buttonWithElevation: {
-    elevation: 5,
-  },
-  loginButtonText: {
-    fontSize: width * 0.05,
-    color: '#46b41e',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  registerText: {
-    fontSize: width * 0.045,
-    color: 'white',
-    marginTop: height * 0.03,
-    textDecorationLine: 'underline',
-  },
-});
-
 export default LoginScreen;

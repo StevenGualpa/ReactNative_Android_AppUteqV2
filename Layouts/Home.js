@@ -6,6 +6,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import 'moment/locale/es'; 
 import { BackHandler,Alert  } from 'react-native';
+import { styleshome } from './Styles/Styles'; // Ajusta la ruta si es necesario
+
+
 
 moment.locale('es');
 const Home = () => {
@@ -124,19 +127,19 @@ const Home = () => {
 
   // Función para renderizar las tarjetas de noticias
   const renderNewsCards = () => {
-    const visibleNews = noticeData.slice(0, 5); // Mostrar solo los primeros 5 elementos
+    const visibleNews = noticeData.slice(0, 5);
     return (
       <ScrollView horizontal>
         {visibleNews.map((content) => (
-          <View key={content.id || content.Titulo} style={styles.cardNoti}>
-            <View style={styles.logoContainer}>
-              <Image source={{ uri: content.Portada }} style={styles.logo} />
+          <View key={content.id || content.Titulo} style={styleshome.cardNoti}>
+            <View style={styleshome.logoContainer}>
+              <Image source={{ uri: content.Portada }} style={styleshome.logo} />
             </View>
-            <Text style={styles.title} numberOfLines={2}>{content.Titulo}</Text>
-            <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(content.url)}>
-              <View style={styles.buttonContent}>
-                <Icon name="arrow-right" size={16} color="white" style={styles.buttonIcon} />
-                <Text style={styles.buttonText}> Leer más</Text>
+            <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
+            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url)}>
+              <View style={styleshome.buttonContent}>
+                <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
+                <Text style={styleshome.buttonText}> Leer más</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -147,20 +150,20 @@ const Home = () => {
   
   // Función para renderizar las tarjetas de noticias
   const renderMagazineCards = () => {
-    const visibleMagazines = magazineData.slice(0, 5); // Mostrar solo los primeros 5 elementos
+    const visibleMagazines = magazineData.slice(0, 5);
     return (
       <ScrollView horizontal>
         {visibleMagazines.map((content) => (
-          <View key={content.id || content.Titulo} style={styles.cardRevis}>
-            <View style={styles.logoContainer}>
-              <Image source={{ uri: content.Portada }} style={styles.logoRevis} />
+          <View key={content.id || content.Titulo} style={styleshome.cardRevis}>
+            <View style={styleshome.logoContainer}>
+              <Image source={{ uri: content.Portada }} style={styleshome.logoRevis} />
             </View>
-            <Text style={styles.title} numberOfLines={2}>{content.Titulo}</Text>
-            <Text style={styles.category}>{content.date}</Text>
-            <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(content.url)}>
-              <View style={styles.buttonContent}>
-                <Icon name="arrow-right" size={16} color="white" style={styles.buttonIcon} />
-                <Text style={styles.buttonText}> Leer más</Text>
+            <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
+            <Text style={styleshome.category}>{content.date}</Text>
+            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url)}>
+              <View style={styleshome.buttonContent}>
+                <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
+                <Text style={styleshome.buttonText}> Leer más</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -169,29 +172,28 @@ const Home = () => {
     );
   };
   
-  
   // Función para renderizar las tarjetas de contenido
   const renderContentCards = () => {
-    const visibleContent = contentData.slice(0, 5); // Mostrar solo los primeros 5 elementos
+    const visibleContent = contentData.slice(0, 5);
     return (
       <ScrollView horizontal>
         {loading ? (
-          <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
+          <ActivityIndicator size="large" color="green" style={styleshome.loadingIndicator} />
         ) : (
           visibleContent.map((content) => (
-            <View key={content.id} style={[styles.cardConte, styles.contentCard]}>
-              <View style={styles.contentContainer}>
-                <Image source={{ uri: content.url_imageb }} style={styles.contentImage} />
-                <Text style={styles.titleconte} numberOfLines={1}>{content.titulo}</Text>
+            <View key={content.id} style={[styleshome.cardConte, styleshome.contentCard]}>
+              <View style={styleshome.contentContainer}>
+                <Image source={{ uri: content.url_imageb }} style={styleshome.contentImage} />
+                <Text style={styleshome.titleconte} numberOfLines={1}>{content.titulo}</Text>
                 <Text>{moment(content.UpdatedAt).format('DD MMM YYYY')}</Text>
               </View>
               <TouchableOpacity
-                style={styles.button}
+                style={styleshome.button}
                 onPress={() => handleButtonPress(content.url_video)}
               >
-                <View style={styles.buttonContent}>
+                <View style={styleshome.buttonContent}>
                   <Icon name="play-circle" size={24} color="white" />
-                  <Text style={styles.buttonText}> Visualizar</Text>
+                  <Text style={styleshome.buttonText}> Visualizar</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -202,200 +204,38 @@ const Home = () => {
   };
   
   return (
-    <View style={styles.container}>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        {/* Secciones del contenido */}
-        <TouchableOpacity style={styles.sectionHeader} onPress={() => handleSectionPress('Noticias')}>
-          <Icon name="newspaper-o" size={28} color="#46741e" />
-          <Text style={styles.sectionTitle}>Noticias</Text>
-        </TouchableOpacity>
-        {renderNewsCards()}
+    <View style={styleshome.container}>
+    <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      {/* Secciones del contenido */}
+      <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Noticias')}>
+        <Icon name="newspaper-o" size={28} color="#46741e" />
+        <Text style={styleshome.sectionTitle}>Noticias</Text>
+      </TouchableOpacity>
+      {renderNewsCards()}
 
-        <TouchableOpacity style={styles.sectionHeader} onPress={() => handleSectionPress('Revistas')}>
-          <Icon name="book" size={28} color="#46741e" />
-          <Text style={styles.sectionTitle}>Revistas</Text>
-        </TouchableOpacity>
-        {renderMagazineCards()}
+      <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Revistas')}>
+        <Icon name="book" size={28} color="#46741e" />
+        <Text style={styleshome.sectionTitle}>Revistas</Text>
+      </TouchableOpacity>
+      {renderMagazineCards()}
 
-        <TouchableOpacity style={styles.sectionHeader} onPress={() => handleSectionPress('Contenido')}>
-          <Icon name="film" size={28} color="#46741e" />
-          <Text style={styles.sectionTitle}>Contenido</Text>
-        </TouchableOpacity>
-        {renderContentCards()}
-      </ScrollView>
+      <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Contenido')}>
+        <Icon name="film" size={28} color="#46741e" />
+        <Text style={styleshome.sectionTitle}>Contenido</Text>
+      </TouchableOpacity>
+      {renderContentCards()}
+    </ScrollView>
 
-      {/* Botón flotante */}
-      <Animated.View
-        style={styles.floatingButton}
-      >
-        <TouchableOpacity style={styles.floatingButtonTouchable} onPress={handleFloatingButtonPress}>
-          <Icon name="comments" size={24} color="#ffffff" />
-        </TouchableOpacity>
-      </Animated.View>
-    </View>
+    {/* Botón flotante */}
+    <Animated.View style={styleshome.floatingButton}>
+      <TouchableOpacity style={styleshome.floatingButtonTouchable} onPress={handleFloatingButtonPress}>
+        <Icon name="comments" size={24} color="#ffffff" />
+      </TouchableOpacity>
+    </Animated.View>
+  </View>
   );
 };
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: '#f5f6fa',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#46741e',
-    textAlign: 'left',
-    marginLeft: 10,
-  },
-  cardRevis: {
-    width: 200,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginRight: 10,
-    height: 350, // Actualiza el valor de height para ajustar la altura de las tarjetas
-  },
-  cardNoti: {
-    width: 200,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginRight: 10,
-    height: 275, // Actualiza el valor de height para ajustar la altura de las tarjetas
-  },
-  cardConte: {
-    width: 200,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    marginRight: 10,
-    height: 300, // Actualiza el valor de height para ajustar la altura de las tarjetas
-  },
-  contentCard: {
-    marginTop: 12,
-    width: 210,
-    height: 210, // Ajusta el ancho de la tarjeta de contenido según tus necesidades
-    marginBottom: 40
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  logo: {
-    width: 160,
-    height: 135,
-    borderRadius: 15,
-    resizeMode: 'stretch'
-  },
-  logoRevis: {
-    width: 195,
-    height: 180,
-    resizeMode: 'contain'
-  },
-  contentImage: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain'
-  },
-  title: {
-    marginTop: 5,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    alignContent:'center'
-  },
-  titleconte: {
-    marginTop: 5,
-    fontSize: 18,
-    fontWeight: 'bold',
-
-    alignContent:'center',
-    textAlign: 'center',
-  },
-  category: {
-    fontSize: 14,
-    color: 'gray',
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: '#46741e',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  titleContainer: {
-    height: 48, // Ajusta esta altura según el tamaño de fuente y otros estilos del título
-  },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#46b41e',
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
-  floatingButtonText: {
-    fontSize: 30,
-    color: '#ffffff',
-  },
-  buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight:5
-  }  
-});
 
 
 export default Home;
