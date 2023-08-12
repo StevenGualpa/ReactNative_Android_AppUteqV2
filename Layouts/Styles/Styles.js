@@ -1,7 +1,9 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
+const cardWidth = width * 0.9;
 
+//Estilos para el Login
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -245,4 +247,197 @@ export const styleshome = StyleSheet.create({
   },
 });
 
+export const stylesVisNotices =StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f6fa',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#46741e',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    width: cardWidth,
+    alignSelf: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  category: {
+    fontSize: 14,
+    color: 'gray',
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#46741e',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+}
+);
 
+export const stylesVisContenidos = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: '#f5f6fa',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#46741e',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  logo: {
+    width: 106,
+    height: 104,
+    borderRadius: 10,
+    resizeMode: 'stretch',
+    marginTop: 7,
+  },
+  title: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  button: {
+    backgroundColor: '#46741e',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  description: {
+    flex: 1,
+    marginVertical: 12,
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  loadingText: {
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  loadingIndicator: {
+    marginTop: 20,
+  },
+  fecha: {
+    textAlign: 'center',
+    marginBottom: 6,
+    marginTop: 4,
+  },
+});
+
+export const stylesVisRevistas = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f6fa',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#46741e',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    width: cardWidth,
+    alignSelf: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 350,
+    borderRadius: 8,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  button: {
+    backgroundColor: '#46741e',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+});

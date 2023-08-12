@@ -4,6 +4,10 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import moment from 'moment';
 import 'moment/locale/es'; 
 moment.locale('es');
+
+import { stylesVisContenidos } from './Styles/Styles'; // Ajusta la ruta si es necesario
+
+
 const ContentCard = () => {
   const [contentData, setContentData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -37,26 +41,26 @@ const ContentCard = () => {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
+      contentContainerStyle={stylesVisContenidos.container}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
-      <Text style={styles.header}>Vista de contenido</Text>
+      <Text style={stylesVisContenidos.header}>Vista de contenido</Text>
       {loading ? (
-        <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
+        <ActivityIndicator size="large" color="green" style={stylesVisContenidos.loadingIndicator} />
       ) : (
         contentData.map((content) => (
-          <View key={content.ID} style={styles.card}>
-            <View style={styles.logoContainer}>
-            <Text numberOfLines={2} ellipsizeMode="tail" style={styles.title}>{content.titulo}</Text>
-              <Image source={{ uri: content.url_imageb }} style={styles.logo} />
+          <View key={content.ID} style={stylesVisContenidos.card}>
+            <View style={stylesVisContenidos.logoContainer}>
+            <Text numberOfLines={2} ellipsizeMode="tail" style={stylesVisContenidos.title}>{content.titulo}</Text>
+              <Image source={{ uri: content.url_imageb }} style={stylesVisContenidos.logo} />
             </View>
             <View>
-            <Text style={styles.fecha}>{moment(content.UpdatedAt).format('LL')}</Text>
-              <Text style={styles.description}>{content.descripcion}</Text>
+            <Text style={stylesVisContenidos.fecha}>{moment(content.UpdatedAt).format('LL')}</Text>
+              <Text style={stylesVisContenidos.description}>{content.descripcion}</Text>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => handleReadMore(content.url_video)}>
+            <TouchableOpacity style={stylesVisContenidos.button} onPress={() => handleReadMore(content.url_video)}>
               <Icon name="external-link" size={20} color="white" />
-              <Text style={styles.buttonText}>Ver contenido</Text>
+              <Text style={stylesVisContenidos.buttonText}>Ver contenido</Text>
             </TouchableOpacity>
           </View>
         ))
@@ -64,85 +68,5 @@ const ContentCard = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: '#f5f6fa',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#46741e',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  logo: {
-      width: 106, // Ajusta el ancho de la imagen según tu preferencia
-      height: 104, // Ajusta el alto de la imagen según tu preferencia
-      borderRadius: 10,
-    
-      resizeMode: 'stretch',
-      marginTop:7,
-  },
-  title: {
-    flex: 1, // Permite que el título tome el espacio restante en la misma fila del logo
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    marginLeft: 5,
-    
-  },
-  button: {
-    backgroundColor: '#46741e',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    marginTop: 10,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  description: {
-    flex: 1,
-    marginVertical: 12,
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  loadingText: {
-    textAlign: 'center',
-    fontSize: 16,
-  },
-  loadingIndicator: {
-    marginTop: 20,
-  },
-  fecha:
-  {
-    textAlign:'center',
-  marginBottom:6,
-  marginTop:4},
-});
 
 export default ContentCard;

@@ -11,8 +11,6 @@ import messaging from '@react-native-firebase/messaging';
 import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la ruta si es necesario
 import { styles } from './Styles/Styles'; // Ajusta la ruta si es necesario
 
-const { width, height } = Dimensions.get('window');
-
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [deviceToken, setDeviceToken] = useState('');
