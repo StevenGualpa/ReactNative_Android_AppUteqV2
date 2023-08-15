@@ -3,6 +3,9 @@ import { StyleSheet, Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 const cardWidth = width * 0.9;
 
+const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
+
 //Estilos para el Login
 export const styles = StyleSheet.create({
   container: {
@@ -439,5 +442,154 @@ export const stylesVisRevistas = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+});
+
+export const stylesPerfil = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  button: {
+    borderColor: '#46741e', // Color del borde
+    borderWidth: 3, // Ancho del borde
+    borderRadius: 30,
+    paddingVertical: 8,
+    paddingHorizontal: 35,
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  profileContainer: {
+    flex: 1, // Expande el profileContainer por toda la pantalla
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: windowWidth * 0.1,
+    borderRadius: windowWidth * 0.02,
+    backgroundColor: '#f5f6fa',
+  },
+  profilePicture: {
+    resizeMode: 'stretch',
+    width: windowWidth * 0.2,
+    height: windowWidth * 0.2,
+    marginBottom: windowHeight * 0.01,
+  },
+  label: {
+    fontSize: windowWidth * 0.04,
+    color: '#f5f6fa',
+    marginBottom: windowHeight * 0.01,
+    borderRadius: 25,
+    backgroundColor: '#46741e',
+    padding: 5,
+  },
+  text: {
+    fontSize: 23,
+    fontWeight: 'bold',
+  },
+  textCorre: {
+    fontSize: windowWidth * 0.04,
+    marginTop: windowHeight * 0.01,
+    marginBottom: windowHeight * 0.02,
+    color: '#2a2d3f',
+  },
+  buttonText: {
+    color: '#6A6C88',
+    fontWeight: 'bold',
+    marginLeft: 5,
+    fontSize: 19,
+  },
+  buttonTextModal: {
+    color: '#f5f6fa',
+    fontWeight: 'bold',
+    marginLeft: 5,
+    fontSize: 19,
+  },
+  profileCard: {
+    padding: 20,
+    alignItems: 'center',
+    marginTop: -windowWidth * 0.2, // Ajusta el margen superior para que la tarjeta esté un poco más arriba
+    marginBottom: windowWidth * 0.0,
+    elevation: 10, // Agrega la elevación (sombra) aquí
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  changePasswordButton: {
+    borderColor: '#46741e', // Color del borde
+    borderWidth: 3, // Ancho del borde
+    borderRadius: 30,
+    paddingVertical: 8,
+    paddingHorizontal: 30,
+    alignItems: 'center',
+    marginTop: 30,
+    justifyContent: 'center',
+    flexDirection: 'row',
+
+  },
+  // Estilos para el modal
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    marginBottom: 5,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  modalInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 200,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  modalInput: {
+    flex: 1,
+  },
+  modalSaveButton: {
+    backgroundColor: '#46741e',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  modalCancelButton: {
+    backgroundColor: '#d32f2f',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  line: {
+    width: '100%',
+    height: 3,
+    backgroundColor: '#46741e', // Color de la línea
+    marginBottom: 5,
   },
 });

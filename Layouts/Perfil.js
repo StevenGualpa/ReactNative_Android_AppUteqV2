@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ImageBackground, TouchableOpacity, Dimensions, TextInput, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
+import { stylesPerfil } from './Styles/Styles';
 
 const ProfileScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -49,24 +50,24 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.profileContainer}>
-        <View style={styles.profileCard}>
+    <View style={stylesPerfil.container}>
+      <View style={stylesPerfil.profileContainer}>
+        <View style={stylesPerfil.profileCard}>
           <Image
             source={require('./iconos/Avatar.png')}
-            style={styles.profilePicture}
+            style={stylesPerfil.profilePicture}
           />
         </View>
-        <Text style={styles.text}>John Doe</Text>
-        <View style={styles.line} />
-        <Text style={styles.label}>  Nombres  </Text>
+        <Text style={stylesPerfil.text}>John Doe</Text>
+        <View style={stylesPerfil.line} />
+        <Text style={stylesPerfil.label}>  Nombres  </Text>
 
-        <Text style={styles.textCorre}>johndoe@example.com</Text>
+        <Text style={stylesPerfil.textCorre}>johndoe@example.com</Text>
 
         {/* Botón "Cambiar Clave" */}
-        <TouchableOpacity style={styles.changePasswordButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity style={stylesPerfil.changePasswordButton} onPress={() => setModalVisible(true)}>
           <Icon name="lock" size={windowWidth * 0.05} color="#6A6C88" />
-          <Text style={styles.buttonText}> Cambiar Clave </Text>
+          <Text style={stylesPerfil.buttonText}> Cambiar Clave </Text>
         </TouchableOpacity>
 
         {/* Botón "Cerrar Sesión" */}
