@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Alert,ActivityIndicator,RefreshControl } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import EditFacultadModal from './EditFacultad';
 import axios from 'axios';
@@ -79,6 +79,8 @@ const FacultadCard = ({ id, nombre, mision, vision, urlVideo, urlFacebook, urlSi
 
 const GestiFacu = () => {
   const [facultades, setFacultades] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchFacultades = async () => {
     try {
@@ -89,6 +91,14 @@ const GestiFacu = () => {
     } catch (error) {
       console.error('Error al obtener las facultades:', error);
     }
+    finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchFacultades();
   };
 
   useEffect(() => {
@@ -104,8 +114,14 @@ const GestiFacu = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Gestión de facultades</Text>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {facultades.map((facultad) => (
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        {loading ? (
+          <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
+        ) : (
+          facultades.map((facultad) => (
           <FacultadCard
           key={facultad.ID}
           id={facultad.ID}
@@ -118,7 +134,8 @@ const GestiFacu = () => {
           carreras={[]} // Aquí pasamos las carreras correspondientes a la facultad desde la API
           onSave={handleFacultadSave}
         />
-        ))}
+        ))
+        )}
       </ScrollView>
     </View>
   );

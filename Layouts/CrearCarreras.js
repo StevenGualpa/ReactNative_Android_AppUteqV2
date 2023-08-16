@@ -115,8 +115,9 @@ const CrearCarreras = () => {
   
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Crear Carrera</Text>
+    <View style={styles.container}>
+    <Text style={styles.title}>Crear Carrera</Text>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
       <View style={styles.formContainer}>
         <Text style={styles.label}>Nombre de la carrera:</Text>
         <TextInput
@@ -179,17 +180,17 @@ const CrearCarreras = () => {
             <Text style={styles.botonTexto}>Limpiar</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     backgroundColor: '#f7f7f7',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
+    paddingTop: 10,
   },
   formContainer: {
     backgroundColor: '#ffffff',
@@ -211,6 +212,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#46741e',
     textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
   },
   label: {
     fontSize: 16,

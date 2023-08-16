@@ -31,6 +31,13 @@ export const BotonContenido = ({ onPress }) => (
     </TouchableOpacity>
   );
 
+  export const BotonEstadisticas = ({ onPress }) => (
+    <TouchableOpacity style={styles.boton} onPress={onPress}>
+      <Ionicons name="md-analytics" size={60} color="#46741e" />
+      <Text style={styles.titulo}>Estadísticas</Text>
+    </TouchableOpacity>
+  );
+
   const styles = StyleSheet.create({
     boton: {
       backgroundColor: '#f2f2f2',

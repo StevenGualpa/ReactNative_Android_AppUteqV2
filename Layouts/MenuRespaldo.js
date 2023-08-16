@@ -3,9 +3,9 @@ import { View, StyleSheet, ScrollView, Dimensions, Text } from 'react-native';
 import ModalContenido from './ModalContenido';
 import ModalFacultades from './ModalFacu';
 import ModalUsuario from './ModalUsuario'
-import { BotonContenido, BotonFacultades, BotonUsuarios, BotonCarreras } from './Components/cardsmenu';
-import { useNavigation } from "@react-navigation/native";
+import { BotonContenido, BotonFacultades, BotonUsuarios, BotonCarreras, BotonEstadisticas} from './Components/cardsmenu';
 import ModalCarrera from './ModalCarreras';
+import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get('window');
 
 const MenuComple = () => {
@@ -18,9 +18,6 @@ const MenuComple = () => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-  const handleCarreraPress = () => {
-    console.log('hola');
-  };
   const toggleModalFacultades = () => {
     setModalFacultadesVisible(!isModalFacultadesVisible);
   };
@@ -30,6 +27,12 @@ const MenuComple = () => {
   const toggleModalCarrea=()=>{
     setModalCarrera(!ismodalcarreravisible);
   };
+
+  const handleCardPress=()=> {
+      navigation.navigate("Estadisticas");
+      console.log('Abrir Crear');
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -49,14 +52,19 @@ const MenuComple = () => {
         </View>
         <View style={styles.cardContainer}>
           <BotonUsuarios onPress={toggleModalUsuario} />
-        </View>
-                
+        </View>                
+      </View>
+      <View style={styles.column}>
+        <View style={styles.cardContainer}>
+          <BotonEstadisticas onPress={handleCardPress} />
+        </View>                
       </View>
       
       <ModalContenido isVisible={isModalVisible} onClose={toggleModal} cardWidth={cardWidthMenu} />
       <ModalFacultades isVisible={isModalFacultadesVisible} onClose={toggleModalFacultades} />
       <ModalUsuario isVisible={isModalUsuarioVisible} onClose={toggleModalUsuario} />
       <ModalCarrera isVisible={ismodalcarreravisible} onClose={toggleModalCarrea}/>
+
     </ScrollView>
   );
 };

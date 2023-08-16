@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Dimensions, Alert,ActivityIndicator } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
 export function Contenido() {
@@ -14,6 +14,9 @@ export function Contenido() {
   const [url_imageb, seturl_imageb] = useState('');
   const [selectedType, setSelectedType] = useState('Tiktok');
   const [isOn, setIsOn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isButtonPressed, setIsButtonPressed] = useState(false);
+
 
   const handleToggleSwitch = () => {
     setIsOn((prevIsOn) => !prevIsOn);
@@ -49,6 +52,10 @@ export function Contenido() {
   };
 
   const handlePublicar = async () => {
+    if (isButtonPressed) {
+      return; // Evitar múltiples pulsaciones
+    }
+    setIsButtonPressed(true);
     if (!titulo || !descripcion || !url_video || !url_imageb) {
       Alert.alert('Campos vacíos', 'Por favor, completa todos los campos antes de publicar.', [
         {
@@ -60,8 +67,10 @@ export function Contenido() {
             else url_imagebRef.current?.focus();
 
           },
+        
         },
       ]);
+      setIsButtonPressed(false); // Desbloquear el botón en caso de error
       return;
     }
     if (selectedType === 'Tiktok') {
@@ -103,6 +112,7 @@ export function Contenido() {
 
 
     try {
+      setIsLoading(true);
       const nuevoContenido = {
         titulo,
         descripcion,
@@ -119,7 +129,7 @@ export function Contenido() {
         },
         body: JSON.stringify(nuevoContenido),
       });
-
+      setIsLoading(false);
       // Mostrar el mensaje de éxito y limpiar los campos
       Alert.alert(
         'Éxito',
@@ -141,8 +151,9 @@ export function Contenido() {
       );
     } catch (error) {
       console.error('Error al guardar los datos:', error);
+      setIsLoading(false);
     }
-
+    setIsButtonPressed(false);
   };
   const validateURL = (url_video) => {
     const regex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -281,10 +292,11 @@ export function Contenido() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <View id="Encabezado" style={styles.container2}>
         <Text style={styles.tituloTexto}>Contenido</Text>
       </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.radioContainer}>
         <TouchableOpacity
           style={[styles.radio, selectedType === 'Tiktok' && styles.radioSelected]}
@@ -302,10 +314,20 @@ export function Contenido() {
         <Text style={styles.radioLabel}>Youtube</Text>
       </View>
       {tikYou()}
-      <TouchableOpacity style={styles.publicarButton} onPress={handlePublicar}>
-        <Text style={styles.publicarButtonText}>Publicar</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+    style={[styles.publicarButton, isButtonPressed && styles.disabledButton]}
+    onPress={handlePublicar}
+    disabled={isButtonPressed} // Deshabilitar el botón si ya ha sido presionado
+  >
+    <Text style={styles.publicarButtonText}>Publicar</Text>
+</TouchableOpacity>
+{isLoading && (
+      <View style={styles.loadingOverlay}>
+        <ActivityIndicator size="large" color="#46741e" />
+      </View>
+    )}
     </ScrollView>
+    </View>
   );
 }
 
@@ -314,12 +336,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#f5f6fa',
     alignItems: 'center',
-    paddingTop: height * 0.05,
+    
     paddingBottom: height * 0.1, // Ajustar el espacio inferior
   },
   container2: {
     alignItems: 'center',
     marginBottom: height * 0.02,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
   },
   encabezadoTexto: {
     fontSize: width * 0.04,
@@ -486,6 +512,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     margin: 2,
   },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Color de fondo semitransparente
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });
 
 export default Contenido;

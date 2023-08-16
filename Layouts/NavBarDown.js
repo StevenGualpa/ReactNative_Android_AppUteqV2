@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -24,11 +24,8 @@ import ProfileScreen from "./Perfil";
 import FacuDetails from "./Mostrarfacultad";
 import CrearCarreras from "./CrearCarreras";
 import GestionCarreras from "./GestionCarreras";
-import { useContext } from 'react';
-import { AuthContext } from './AuthContext';
-
-
-
+import ViewsApp from "./Estadisticas";
+import axios from 'axios';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -57,6 +54,8 @@ function Chatboxito() {
       <stack2.Screen name="UserG" component={AppUser} options={{ headerShown: false }} />
       <stack2.Screen name="Carreras" component={CrearCarreras} options={{ headerShown: false }} />
       <stack2.Screen name="CarrerasG" component={GestionCarreras} options={{ headerShown: false }} />
+      <stack2.Screen name="Estadisticas" component={ViewsApp} options={{headerShown:false}}/>
+      
     </stack2.Navigator>
   );
 }
@@ -94,6 +93,23 @@ function MyTabs() {
               <MaterialCommunityIcons name="home" color={color} size={26} />
             ),
           }}
+          listeners={({ navigation }) => ({
+            tabPress: () => {
+              // Registro de estadísticas al presionar "Inicio"
+              const data = {
+                seccion: 'Inicio',
+                nombre: 'Inicio',
+              };
+              
+              axios.post('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/insert', data)
+                .then(response => {
+                  console.log('Estadísticas registradas:', response.data);
+                })
+                .catch(error => {
+                  console.error('Error al registrar estadísticas:', error);
+                });
+            },
+          })}
         />
         <Tab.Screen
           name="Preferencias"
@@ -136,7 +152,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
+        {/*<Stack.Screen name="Login" component={LoginScreen} >*/}
         <Stack.Screen name="NavigationBar" component={MyTabs} />
       </Stack.Navigator>
     </NavigationContainer>

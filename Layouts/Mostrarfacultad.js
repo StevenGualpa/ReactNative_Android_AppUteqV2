@@ -1,267 +1,293 @@
-import React, { useState } from 'react'; // Asegúrate de importar useState
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, StyleSheet, Modal, Image, Linking } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+  StyleSheet,
+  Image,
+  Linking,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios'; // Asegúrate de importar axios si aún no lo has hecho
+import axios from 'axios';
 
 const windowWidth = Dimensions.get('window').width;
 
-const FacuDetails = ({ facultad, onGoBack }) => {
+export const FacuDetails = ({ facultad, onGoBack }) => {
   const [activeTab, setActiveTab] = useState('mision');
+  const [carrerasData, setCarreras] = useState([]);
   const [selectedCarrera, setSelectedCarrera] = useState(null);
-  const [carrerasData, setCarreras] = useState([]); // Estado para almacenar las carreras
+  const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchCarreras();
+  }, []);
 
   const handleTabPress = (tab) => {
     setActiveTab(tab);
     if (tab === 'carreras') {
-      fecthCarreras(); // Llamar al fetchCarreras solo cuando la pestaña es "carreras"
+      fetchCarreras();
     }
   };
-  const handleGoBack = () => {
-    onGoBack(); // Llamamos a la función onGoBack pasada como prop
-  };
-  const handleCarreraPress = (carrera) => {
-    setSelectedCarrera(carrera);
-  };
 
-  const fecthCarreras = async () => {
+  const fetchCarreras = async () => {
     try {
-      const response = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/carreras/getall/${facultad.ID}`);
+      setLoading(true);
+      const response = await axios.get(
+        `https://noticias-uteq-4c62c24e7cc5.herokuapp.com/carreras/getall/${facultad.ID}`
+      );
       const carrerasData = response.data.carreras.map((carrera) => ({
         id: carrera.id,
         nombre: carrera.nombre,
         descripcion: carrera.descripcion,
         imageURL: carrera.imageURL,
-        UrlSitioOf: carrera.UrlSitio // Agregar la propiedad urlImagen
+        UrlSitioOf: carrera.UrlSitio,
       }));
-      console.log('Carreras:', carrerasData); // Mostrar las carreras en el log
       setCarreras(carrerasData);
+      setLoading(false);
     } catch (error) {
       console.error('Error al obtener las carreras:', error);
-    }
-  };
-  const renderCarreras = () => {
-    return (
-      <ScrollView contentContainerStyle={styles.carrerasContainer}>
-        {carrerasData.map((carrera) => (
-          <TouchableOpacity
-            key={carrera.id} // Aquí está la clave única
-            style={styles.carreraCard}
-            onPress={() => handleCarreraPress(carrera)}
-          >
-            <Text style={styles.carreraCardTitle}>{carrera.nombre}</Text>
-            <Image source={{ uri: carrera.imageURL }} style={styles.carreraCardImage} />
-            <Text>{carrera.descripcion}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    );
-  };
-  
-
-  const renderMision = () => {
-    return (
-      <View style={styles.tabContent}>
-        <Text style={styles.tabTitle}>Misión</Text>
-        <Text>{facultad.mision}</Text>
-      </View>
-    );
-  };
-
-
-  const renderVision = () => {
-    return (
-      <View style={styles.tabContent}>
-        <Text style={styles.tabTitle}>Visión</Text>
-        <Text>{facultad.vision}</Text>
-      </View>
-    );
-  };
-
-  const handleFacebookPress = () => {
-    if (facultad.urlFacebook) {
-      Linking.openURL(facultad.urlFacebook);
+      setLoading(false);
     }
   };
 
-  const handleGooglePress = () => {
-    if (facultad.UrlSitio) {
-      Linking.openURL(facultad.UrlSitio);
-    }
+  const openCarreraModal = (carrera) => {
+    setSelectedCarrera(carrera);
+    setModalVisible(true);
   };
-  
-  const handleGoogleCarrera = () => {
-    if (selectedCarrera && selectedCarrera.UrlSitioOf) {
-      Linking.openURL(selectedCarrera.UrlSitioOf).catch((err) =>
-        console.error("Error al abrir la URL de la carrera:", err)
-      );
-    }
+
+  const closeCarreraModal = () => {
+    setSelectedCarrera(null);
+    setModalVisible(false);
   };
-  
-  
 
   return (
-    <ScrollView style={styles.container}>
-     
-      <Text style={styles.facultyTitle}>{facultad.nombre}</Text>
-
-     
-      <View style={styles.videoContainer}>
-        <WebView
-          source={{ uri: facultad.urlVideo }} 
-          style={styles.video}
-        />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onGoBack}>
+          <Icon name="arrow-back" size={30} color={'#46741e'} />
+        </TouchableOpacity>
+        <Text style={styles.title}>{facultad.nombre}</Text>
       </View>
-
-  
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'carreras' ? styles.activeTab : {}]}
-          onPress={() => handleTabPress('carreras')}
-        >
-          <Icon name="book-outline" size={24} color={activeTab === 'carreras' ? '#FFFFFF' : '#000000'} />
-          <Text style={[styles.tabButtonText, activeTab === 'carreras' ? styles.activeTabText : {}]}>Carreras</Text>
+      <WebView style={styles.video} source={{ uri: facultad.urlVideo }} />
+      <View style={styles.tabs}>
+        <TouchableOpacity onPress={() => handleTabPress('mision')} style={styles.tab}>
+          <Icon name="book-outline" size={20} color="#46741e" />
+          <Text style={styles.tabText}>MISIÓN</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'mision' ? styles.activeTab : {}]}
-          onPress={() => handleTabPress('mision')}
-        >
-          <Icon name="newspaper-outline" size={24} color={activeTab === 'mision' ? '#FFFFFF' : '#000000'} />
-          <Text style={[styles.tabButtonText, activeTab === 'mision' ? styles.activeTabText : {}]}>Misión</Text>
+        <TouchableOpacity onPress={() => handleTabPress('vision')} style={styles.tab}>
+          <Icon name="eye-outline" size={20} color="#46741e" />
+          <Text style={styles.tabText}>VISIÓN</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'vision' ? styles.activeTab : {}]}
-          onPress={() => handleTabPress('vision')}
-        >
-          <Icon name="eye-outline" size={24} color={activeTab === 'vision' ? '#FFFFFF' : '#000000'} />
-          <Text style={[styles.tabButtonText, activeTab === 'vision' ? styles.activeTabText : {}]}>Visión</Text>
+        <TouchableOpacity onPress={() => handleTabPress('carreras')} style={styles.tab}>
+          <Icon name="school-outline" size={20} color="#46741e" />
+          <Text style={styles.tabText}>CARRERAS</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Información de cada pestaña */}
-      {activeTab === 'carreras' && renderCarreras()}
-      {activeTab === 'mision' && renderMision()}
-      {activeTab === 'vision' && renderVision()}
-
-      {/* BOTONES DE GOOGLE Y FACEBOOK */}
-      <View style={styles.socialButtonsContainer}>
-        <TouchableOpacity style={styles.facebookButton} onPress={handleFacebookPress}>
-          <Icon name="logo-facebook" size={24} color="#FFFFFF" />
+      <ScrollView style={styles.scrollContainer}>
+        {activeTab === 'mision' && (
+          <View style={styles.cardView}>
+            <Text style={styles.cardTitle}>MISIÓN</Text>
+            <Text style={styles.cardContent}>{facultad.mision}</Text>
+          </View>
+        )}
+        {activeTab === 'vision' && (
+          <View style={styles.cardView}>
+            <Text style={styles.cardTitle}>VISIÓN</Text>
+            <Text style={styles.cardContent}>{facultad.vision}</Text>
+          </View>
+        )}
+        {activeTab === 'carreras' &&
+          carrerasData.map((carrera) => (
+            <TouchableOpacity
+              key={carrera.id}
+              style={styles.carreraCard}
+              onPress={() => openCarreraModal(carrera)}
+            >
+              <Image source={{ uri: carrera.imageURL }} style={styles.carreraImage} resizeMode="contain" />
+              <Text style={styles.carreraTitle}>{carrera.nombre}</Text>
+              <Text style={styles.carreraDescription}>{carrera.descripcion.substring(0, 120)}... Ver mas</Text>
+            </TouchableOpacity>
+          ))}
+      </ScrollView>
+      <View style={styles.socialLinks}>
+        <TouchableOpacity style={styles.socialButton} onPress={() => Linking.openURL(facultad.facebookURL)}>
+          <Icon name="logo-facebook" size={24} color="#3b5998" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.googleButton} onPress={handleGooglePress}>
-          <Icon name="logo-google" size={24} color="#F4B400" />
+        <TouchableOpacity style={styles.socialButton} onPress={() => Linking.openURL(facultad.googleURL)}>
+          <Icon name="logo-google" size={24} color="#db4437" />
         </TouchableOpacity>
       </View>
-
       <Modal
-        visible={selectedCarrera !== null}
+        animationType="slide"
         transparent={true}
-        onRequestClose={() => setSelectedCarrera(null)}
+        visible={modalVisible}
+        onRequestClose={closeCarreraModal}
       >
-        <View style={styles.modalContainer}>
-          {selectedCarrera && (
+        {selectedCarrera ? (
+          <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
+              <Image source={{ uri: selectedCarrera.imageURL }} style={styles.modalImage} resizeMode="contain" />
               <Text style={styles.modalTitle}>{selectedCarrera.nombre}</Text>
-              <Image
-                source={{ uri: selectedCarrera.imageURL }}
-                style={styles.modalImage}
-              />
-              <Text style={styles.modalDescription}>{selectedCarrera.descripcion}</Text>
-              <View style={styles.socialButtonsContainer}>
-              <TouchableOpacity style={styles.googleButton} onPress={handleGoogleCarrera}>
-                <Icon name="logo-google" size={24} color="#F4B400" />
-              </TouchableOpacity>
-              </View>
+              <ScrollView style={styles.modalDescriptionContainer}>
+                <Text style={styles.modalDescription}>{selectedCarrera.descripcion}</Text>
+              </ScrollView>
               <TouchableOpacity
-                style={styles.modalCloseButton}
-                onPress={() => setSelectedCarrera(null)}
+                style={styles.websiteButton}
+                onPress={() => Linking.openURL(selectedCarrera.UrlSitioOf)}
               >
-                <Icon name="close-outline" size={24} color="#FFFFFF" />
+                <View style={styles.buttonContent}>
+                  <Icon name="globe-outline" size={20} color="#fff" />
+                  <Text style={styles.buttonText}>Visitar Sitio Web</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={closeCarreraModal}
+              >
+                <View style={styles.buttonContent}>
+                  <Icon name="close-outline" size={20} color="#fff" />
+                  <Text style={styles.buttonText}>Cerrar</Text>
+                </View>
               </TouchableOpacity>
             </View>
-          )}
-        </View>
+          </View>
+        ) : (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#4caf50" />
+          </View>
+        )}
       </Modal>
-     
-      <TouchableOpacity onPress={handleGoBack} style={styles.goBackButton}>
-        <Icon name="arrow-back" size={24} color="#FFFFFF" />
-      </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding:10
+    backgroundColor: '#f0f0f0',
   },
-  facultyTitle: {
-    fontSize: 24,
+  cardView: {
+    margin: 15,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    elevation: 3,
+  },
+  cardTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    color: '#ffffff',
+    color: '#4caf50', // Green color
+    marginBottom: 5,
   },
-  videoContainer: {
+  cardContent: {
+    fontSize: 16,
+    color: '#333',
+  },
+  header: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  title: {
+    fontSize: 20,
+    marginLeft: 15,
+    fontWeight: 'bold',
+    color: '#46741e', // Title color in green
   },
   video: {
-    width: windowWidth - 40,
-    height: (windowWidth - 40) * 9 / 16,
-    borderRadius: 8,
+    width: windowWidth,
+    height: 200,
   },
-  buttonContainer: {
+  tabs: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginVertical: 20,
+    justifyContent: 'space-around',
+    backgroundColor: '#f9f9f9',
+    elevation: 2,
   },
-  tabButton: {
+  tab: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
     borderRadius: 15,
+    backgroundColor: '#ffffff',
+    elevation: 15,
+    padding: 10,
+    margin: 5,
   },
-  activeTab: {
-    backgroundColor: '#46741e',
-  },
-  tabButtonText: {
+  tabText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 5,
+    marginLeft: 10,
+    color: '#333',
   },
-  activeTabText: {
-    color: '#FFFFFF',
+  scrollContainer: {
+    marginTop: 5,
+    flex: 1,
   },
   tabContent: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-  },
-  tabTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  carrerasContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    padding: 15,
+    fontSize: 16,
   },
   carreraCard: {
-    width: '48%',
-    marginVertical: 5,
+    margin: 15,
     padding: 10,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    elevation: 3,
   },
-  carreraCardTitle: {
+  carreraImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+  },
+  carreraTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginVertical: 10,
+  },
+  carreraDescription: {
+    fontSize: 15,
+    color: '#555',
+  },
+  websiteButton: {
+    backgroundColor: '#ffd700',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  websiteButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  closeButton: {
+    backgroundColor: '#4caf50',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  socialLinks: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
+  },
+  socialButton: {
+    padding: 10,
+    borderRadius: 50,
+    backgroundColor: '#fff',
+    elevation: 10,
   },
   modalContainer: {
     flex: 1,
@@ -270,69 +296,49 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 20,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalDescription: {
-    fontSize: 16,
-  },
-  modalCloseButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#46741e',
-    padding: 8,
-    borderRadius: 20,
-  },
-  goBackButton: {
-    position: 'absolute',
-    borderRadius: 20,
-  },
-  carreraCardImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 10,
+    backgroundColor: '#fff',
+    width: '95%',
+    borderRadius: 15,
+    padding: 10,
+    alignItems: 'center',
+    elevation: 5,
   },
   modalImage: {
     width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 10,
+    height: windowWidth - 200,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
-  socialButtonsContainer: {
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#4caf50',
+    textAlign: 'center',
+  },
+  modalDescriptionContainer: {
+    maxHeight: 350,
+    marginVertical: 10,
+  },
+  modalDescription: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonContent: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    margin:5,
-    padding:15
-  },
-  facebookButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginHorizontal: 10, // Espacio entre los botones
-    backgroundColor: '#3b5998', // Color de fondo de Facebook
-    justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 5,
   },
-  googleButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginHorizontal: 10, // Espacio entre los botones
-    backgroundColor: '#FFFFFF', // Color de fondo de Google
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#4285F4', // Color del borde del botón de Google
-    elevation: 3, // Sombra para darle un efecto flotante
+  buttonText: {
+    fontSize: 16,
+    color: '#fff',
+    marginLeft: 5,
   },
 });
 
