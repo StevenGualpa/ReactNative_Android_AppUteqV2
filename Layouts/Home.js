@@ -8,6 +8,7 @@ import 'moment/locale/es';
 import { BackHandler,Alert  } from 'react-native';
 import { styleshome } from './Styles/Styles'; // Ajusta la ruta si es necesario
 
+
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
 
@@ -35,7 +36,7 @@ const Home = () => {
   const [noticeData, setnoticeData] = useState([]);
   const [loading, setLoading] = useState(true);
 
- /* const blockBackButton = () => {
+ const blockBackButton = () => {
     Alert.alert(
       "Confirmar salida",
       "¿Estás seguro de que quieres salir de la aplicación?",
@@ -56,7 +57,7 @@ const Home = () => {
         BackHandler.removeEventListener('hardwareBackPress', blockBackButton);
       };
     }, [])
-  );*/
+  );
 
   // Función para obtener los contenidos desde heroku
   useEffect(() => {
@@ -81,8 +82,22 @@ const Home = () => {
     setRefreshing(false);
   };
 
-  const handleButtonPress = (link) => {
+  const handleButtonPress = (link, section, nombre) => {
     Linking.openURL(link);
+
+    // Registro de estadísticas al presionar "Leer más"
+    const data = {
+      seccion: section,
+      nombre: nombre,
+    };
+
+    axios.post('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/insert', data)
+      .then(response => {
+        console.log('Estadísticas registradas:', response.data);
+      })
+      .catch(error => {
+        console.error('Error al registrar estadísticas:', error);
+      });
   };
   
   // Función para obtener los datos de las revistas desde la API
@@ -116,19 +131,36 @@ const Home = () => {
  
   
   // Función para manejar la acción de presionar una sección
-  const handleSectionPress = (section) => {
-    if (section === 'Noticias') {
-      navigation.navigate("Noticias");
-    } else {
-      if (section === 'Revistas') {
-        navigation.navigate("Revistas");
+  const handleSectionPress = async (section) => {
+    try {
+      // Insertar estadísticas
+      const response = await fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/insert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          seccion: section,
+          nombre: `${section}`,
+        }),
+      });
+      const data = await response.json();
+      if (section === 'Noticias') {
+        navigation.navigate("Noticias");
       } else {
-        if (section === 'Contenido') {
-          navigation.navigate("Contenido");
+        if (section === 'Revistas') {
+          navigation.navigate("Revistas");
         } else {
-          console.log(`Redirigiendo a la sección: ${section}`);
+          if (section === 'Contenido') {
+            navigation.navigate("Contenido");
+          } else {
+            console.log(`Redirigiendo a la sección: ${section}`);
+          }
         }
       }
+      console.log('Estadística insertada:', data);
+    } catch (error) {
+      console.error('Error al insertar estadística:', error);
     }
 
 
@@ -150,7 +182,7 @@ const Home = () => {
               <Image source={{ uri: content.Portada }} style={styleshome.logo} />
             </View>
             <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
-            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url)}>
+            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Noticias', content.Titulo)}>
               <View style={styleshome.buttonContent}>
                 <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
                 <Text style={styleshome.buttonText}> Leer más</Text>
@@ -174,7 +206,7 @@ const Home = () => {
             </View>
             <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
             <Text style={styleshome.category}>{content.date}</Text>
-            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url)}>
+            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Revistas', content.Titulo)}>
               <View style={styleshome.buttonContent}>
                 <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
                 <Text style={styleshome.buttonText}> Leer más</Text>
@@ -184,8 +216,7 @@ const Home = () => {
         ))}
       </ScrollView>
     );
-  };
-  
+  };  
   // Función para renderizar las tarjetas de contenido
   const renderContentCards = () => {
     const visibleContent = contentData.slice(0, 5);
@@ -203,7 +234,7 @@ const Home = () => {
               </View>
               <TouchableOpacity
                 style={styleshome.button}
-                onPress={() => handleButtonPress(content.url_video)}
+                onPress={() => handleButtonPress(content.url_video, 'Contenido', content.titulo)}
               >
                 <View style={styleshome.buttonContent}>
                   <Icon name="play-circle" size={24} color="white" />

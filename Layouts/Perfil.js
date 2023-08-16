@@ -11,7 +11,7 @@ import { AuthContext } from './AuthContext';
 import { useNavigation } from '@react-navigation/native';
 
 
-const ProfileScreen = () => {
+const ProfileScreen = (id,Contraseña) => {
 
     //Verificamos si jalamos el id
     const { user, setUser } = useContext(AuthContext);
@@ -24,14 +24,15 @@ const ProfileScreen = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showRepeatNewPassword, setShowRepeatNewPassword] = useState(false);
+  const [editPass, setEditPass] = useState(Contraseña);
 
   const handleSavePassword = () => {
-    if (!currentPassword || !newPassword || !repeatNewPassword) {
+    if ( !editPass || !repeatNewPassword) {
       Alert.alert('Error', 'Ninguno de los campos puede estar vacío.');
       return;
     }
 
-    if (!isValidPassword(newPassword)) {
+    if (!isValidPassword(editPass)) {
       Alert.alert(
         'Error',
         'La contraseña nueva debe tener entre 8 y 15 caracteres y contener una combinación de mayúsculas, minúsculas, números y caracteres especiales.'
@@ -39,14 +40,53 @@ const ProfileScreen = () => {
       return;
     }
 
-    if (newPassword !== repeatNewPassword) {
+    if (editPass !== repeatNewPassword) {
       Alert.alert('Error', 'Las contraseñas nuevas no coinciden.');
       return;
     }
 
-    // Aquí puedes implementar la lógica para guardar la nueva contraseña
-    // Por ejemplo, enviarla al servidor o almacenarla localmente
-    // También puedes cerrar el modal después de guardar la contraseña:
+    Alert.alert(
+      'Guardar cambios',
+      '¿Desea guardar los cambios?',
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+          onPress: () => {
+            setEditPass(Contraseña);
+            setModalVisible(false);
+
+          },
+        },
+        {
+          text: 'Sí',
+          onPress: async () => {
+            try {
+              const userId = user.ID; // Aquí obtienes el ID del usuario desde el contexto
+              const editedData = {
+                id: userId,
+                password: editPass,
+              };
+          
+              // Actualizar el documento con los datos editados
+              await fetch(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/updateUser/${userId}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editedData),
+              });
+              console.log("edit", editedData);
+              // Mostrar mensaje de éxito
+              Alert.alert('Los datos se modificaron correctamente');
+              setModalVisible(false);
+            } catch (error) {
+              console.error('Error al guardar los cambios:', error);
+            }          
+          },
+        },
+      ]
+    );
     setModalVisible(false);
   };
 
@@ -74,6 +114,14 @@ const ProfileScreen = () => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
     return passwordRegex.test(password);
   };
+  const openModal = () => {
+    // Limpia los estados de los inputs
+    
+    setEditPass('');
+    setRepeatNewPassword('');
+    // Abre el modal
+    setModalVisible(true);
+  };
 
   return (
     <View style={stylesPerfil.container}>
@@ -91,7 +139,7 @@ const ProfileScreen = () => {
         <Text style={stylesPerfil.textCorre}>{user ? user.email : 'Correo no disponible'}</Text>
 
         {/* Botón "Cambiar Clave" */}
-        <TouchableOpacity style={stylesPerfil.changePasswordButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity style={stylesPerfil.changePasswordButton} onPress={openModal}>
           <Icon name="lock" size={windowWidth * 0.05} color="#6A6C88" />
           <Text style={stylesPerfil.buttonText}> Cambiar Clave </Text>
         </TouchableOpacity>
@@ -108,30 +156,19 @@ const ProfileScreen = () => {
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Editar Clave</Text>
           <Text style={styles.modalLabel}>Nombre:</Text>
-          <Text style={styles.modalText}>John Doe</Text>
+          <Text style={styles.modalText}>{user ? user.nombre +" "+ user.apellido : 'Nombre no disponible'}</Text>
 
           <Text style={styles.modalLabel}>Correo:</Text>
-          <Text style={styles.modalText}>johndoe@example.com</Text>
+          <Text style={styles.modalText}>{user ? user.email : 'Correo no disponible'}</Text>
 
-          <Text style={styles.modalLabel}>Clave Actual:</Text>
-          <View style={styles.modalInputContainer}>
-            <TextInput
-              style={styles.modalInput}
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              secureTextEntry={!showCurrentPassword}
-            />
-            <TouchableOpacity onPress={() => setShowCurrentPassword(!showCurrentPassword)}>
-              <Icon name={showCurrentPassword ? 'eye-slash' : 'eye'} size={windowWidth * 0.05} color="#000" />
-            </TouchableOpacity>
-          </View>
+        
 
           <Text style={styles.modalLabel}>Clave Nueva:</Text>
           <View style={styles.modalInputContainer}>
             <TextInput
               style={styles.modalInput}
-              value={newPassword}
-              onChangeText={setNewPassword}
+              value={editPass}
+              onChangeText={setEditPass}
               secureTextEntry={!showNewPassword}
             />
             <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
