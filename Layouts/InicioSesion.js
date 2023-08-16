@@ -10,8 +10,11 @@ import { useNavigation } from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la ruta si es necesario
 import { styles } from './Styles/Styles'; // Ajusta la ruta si es necesario
+import { useAuth } from './AuthContext';
+
 
 const LoginScreen = () => {
+  const { setUser } = useAuth();
   const navigation = useNavigation();
   const [deviceToken, setDeviceToken] = useState('');
   const [correo, setCorreo] = useState('');
@@ -58,11 +61,13 @@ const LoginScreen = () => {
       .then(data => {
 
         if (data.usuario.verificado === false) {
+          setUser(data.usuario); // Correcto // Guardar el usuario en el contexto
           setUserID(data.usuario.ID); // Guardar el ID del usuario
           setVerificationModalVisible(true); // Mostrar el modal de verificación
         } 
         else {
           if (data.usuario.email === correo && data.usuario.password === contraseña) {
+            setUser(data.usuario); // Correcto // Guardar el usuario en el contexto
             navigation.navigate('NavigationBar');
           } else {
             console.log('El correo electrónico y la contraseña devueltos no coinciden con los enviados.');

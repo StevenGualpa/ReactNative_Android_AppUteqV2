@@ -8,11 +8,25 @@ import 'moment/locale/es';
 import { BackHandler,Alert  } from 'react-native';
 import { styleshome } from './Styles/Styles'; // Ajusta la ruta si es necesario
 
-
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
 
 moment.locale('es');
 const Home = () => {
   const navigation = useNavigation();
+
+  //Verificamos si jalamos el id
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    console.log('Usuario desde el contexto:', user); // Registro de depuración
+    if (user) {
+      Alert.alert("ID del Usuario", `El ID del usuario es: ${user.ID}`);
+    } else {
+      console.log("Usuario o ID no definido");
+    }
+  }, [user]);
+
 
   //declaracion de estados
   const [refreshing, setRefreshing] = useState(false);

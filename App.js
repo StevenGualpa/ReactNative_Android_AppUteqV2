@@ -3,6 +3,8 @@ import AppNavigator from './Layouts/NavBarDown';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 
+import { AuthProvider } from './Layouts/AuthContext';
+
 export default function App() {
   const [deviceToken, setDeviceToken] = useState('');
 
@@ -48,6 +50,8 @@ export default function App() {
   }, []);
 
   return (
+    <AuthProvider>
     <AppNavigator />
+  </AuthProvider>
   );
 }

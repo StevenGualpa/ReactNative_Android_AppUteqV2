@@ -24,6 +24,11 @@ import ProfileScreen from "./Perfil";
 import FacuDetails from "./Mostrarfacultad";
 import CrearCarreras from "./CrearCarreras";
 import GestionCarreras from "./GestionCarreras";
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
+
+
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

@@ -4,7 +4,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
 import { stylesPerfil } from './Styles/Styles';
 
+
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
+
 const ProfileScreen = () => {
+
+    //Verificamos si jalamos el id
+    const { user } = useContext(AuthContext);
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -58,11 +65,11 @@ const ProfileScreen = () => {
             style={stylesPerfil.profilePicture}
           />
         </View>
-        <Text style={stylesPerfil.text}>John Doe</Text>
+        <Text style={stylesPerfil.text}>{user.ID}</Text>
         <View style={stylesPerfil.line} />
         <Text style={stylesPerfil.label}>  Nombres  </Text>
 
-        <Text style={stylesPerfil.textCorre}>johndoe@example.com</Text>
+        <Text style={stylesPerfil.textCorre}>{user.email}</Text>
 
         {/* Botón "Cambiar Clave" */}
         <TouchableOpacity style={stylesPerfil.changePasswordButton} onPress={() => setModalVisible(true)}>
