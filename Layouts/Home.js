@@ -22,7 +22,7 @@ const Home = () => {
   useEffect(() => {
     console.log('Usuario desde el contexto:', user); // Registro de depuración
     if (user) {
-      Alert.alert("ID del Usuario", `El ID del usuario es: ${user.ID}`);
+      Alert.alert("Usuario Ingresado", `Bienvenido ${user.nombre}`);
     } else {
       console.log("Usuario o ID no definido");
     }

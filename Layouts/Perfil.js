@@ -77,7 +77,7 @@ const ProfileScreen = (id,Contraseña) => {
                 body: JSON.stringify(editedData),
               });
               console.log("edit", editedData);
-              // Mostrar mensaje de éxito
+              // Mostrar mensaje de éxiton
               Alert.alert('Los datos se modificaron correctamente');
               setModalVisible(false);
             } catch (error) {
@@ -91,18 +91,10 @@ const ProfileScreen = (id,Contraseña) => {
   };
 
   const handleLogout = () => {
-    
-    // Aquí puedes implementar la lógica para cerrar sesión
-    // Por ejemplo, limpiar el estado y redirigir a la pantalla de inicio de sesión
     try {
       // Limpia el estado del usuario en el contexto
       setUser(null);
-  
-      // Elimina la información del usuario del almacenamiento persistente
-      //await AsyncStorage.removeItem('user');
-  
-      // Navega de regreso a la pantalla de inicio de sesión
-      navigation.navigate('Login'); // Asegúrate de que 'LoginScreen' sea el nombre correcto de tu pantalla de inicio de sesión
+    navigation.navigate("Login"); // Asegúrate de que 'LoginScreen' sea el nombre correcto de tu pantalla de inicio de sesión
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
       Alert.alert('Error', 'Ocurrió un error al cerrar sesión. Por favor, inténtalo de nuevo.');
@@ -132,7 +124,7 @@ const ProfileScreen = (id,Contraseña) => {
             style={stylesPerfil.profilePicture}
           />
         </View>
-        <Text style={stylesPerfil.text}>{user ? user.ID : 'ID no disponible'}</Text>
+        <Text style={stylesPerfil.text}>{user ? user.nombre +" "+ user.apellido : 'Nombre no disponible'}</Text>
         <View style={stylesPerfil.line} />
         <Text style={stylesPerfil.label}>  Nombres  </Text>
 
@@ -156,7 +148,7 @@ const ProfileScreen = (id,Contraseña) => {
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Editar Clave</Text>
           <Text style={styles.modalLabel}>Nombre:</Text>
-          <Text style={styles.modalText}>{user ? user.nombre +" "+ user.apellido : 'Nombre no disponible'}</Text>
+          <Text style={styles.modalText}>{user? user.nombre +" "+ user.apellido : 'Nombre no disponible'}</Text>
 
           <Text style={styles.modalLabel}>Correo:</Text>
           <Text style={styles.modalText}>{user ? user.email : 'Correo no disponible'}</Text>

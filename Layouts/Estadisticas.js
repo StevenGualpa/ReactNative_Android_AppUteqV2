@@ -11,7 +11,12 @@ const CardView = ({ title, count, icon, extraTitle }) => (
     {extraTitle && <Text style={styles.extraTitle}>{extraTitle}</Text>}
   </View>
 );
-
+const FacultadesCardView = ({ nombre, count }) => (
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>{nombre}</Text>
+    <Text style={styles.cardCount}>{count}</Text>
+  </View>
+);
 const SectionHeader = ({ title, icon, showContent, onPress }) => (
   <TouchableOpacity style={styles.sectionHeader} onPress={onPress}>
     <Ionicons name={icon} size={24} color="#46741e" />
@@ -40,8 +45,23 @@ const App = () => {
     const [revistaMenosVista, setRevistaMenosVista] = useState({ nombre: '', count: 0 });
     const [contenidoMasVisualizado, setContenidoMasVisualizado] = useState({nombre: '',count: 0,});
     const [contenidoMenosVisualizado, setContenidoMenosVisualizado] = useState({nombre: '', count: 0,});
+    const [facultades, setFacultades] = useState([]);
+    const [showFacultades, setshowfacultades]=useState(false);
   
-  
+    const fetchFacultadesData = async () => {
+      try {
+        const facultadesResponse = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/GetAllSeccionNombreCount/facultades');
+        const facultadesData = facultadesResponse.data.results;
+    
+        // Ordenar las facultades de mayor a menor
+        facultadesData.sort((a, b) => b.count - a.count);
+    
+        setFacultades(facultadesData);
+      } catch (error) {
+        console.error('Error fetching facultades data:', error);
+      }
+    };
+    
     const fetchData = async () => {
       try {
         // Fetch Usuarios
@@ -68,6 +88,8 @@ const App = () => {
         const contenidoResponse = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/GetAllSeccion/Contenido');
         setVisualizacionesContenido(contenidoResponse.data.length);
   
+        
+
         // Conteo de noticias más vistas
         const noticiasData = noticiasResponse.data.analitics;
         const noticiasCountByNombre = noticiasData.reduce((acc, item) => {
@@ -171,13 +193,14 @@ const App = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    };
-  
-    
-  
+    }; 
     useEffect(() => {
       fetchData();
-      const intervalId = setInterval(fetchData, 6000);
+      fetchFacultadesData();
+      const intervalId = setInterval(() => {
+        fetchData();
+        fetchFacultadesData();
+      }, 6000);
   
       return () => clearInterval(intervalId);
     }, []);    
@@ -196,6 +219,9 @@ const App = () => {
       case 'contenido':
         setShowContenido(!showContenido);
         break;
+        case 'facultades':
+          setshowfacultades(!showFacultades);
+          break;
       default:
         break;
     }
@@ -212,6 +238,7 @@ const App = () => {
   const noticiasData = data.find(item => item.id === 'noticias');
   const revistasData = data.find(item => item.id === 'revistas');
   const contenidoData = data.find(item => item.id === 'contenido');
+  const facultadesData = data.find(item => item.id === 'facultades');
 
   return (
     <View style={styles.container}>
@@ -222,6 +249,7 @@ const App = () => {
           { id: 'noticias', title: 'Noticias', icon: 'ios-newspaper', showContent: showNoticias },
           { id: 'revistas', title: 'Revistas', icon: 'ios-albums', showContent: showRevistas },
           { id: 'contenido', title: 'Contenido', icon: 'ios-book', showContent: showContenido },
+          { id: 'facultades', title: 'Facutlades', icon: 'ios-book', showContent: showFacultades },
         ]}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
@@ -300,6 +328,15 @@ const App = () => {
                   count={contenidoMenosVisualizado.count}
                   icon="ios-eye-off"
                   extraTitle={contenidoMenosVisualizado.nombre}
+                />
+              </View>
+            )}
+            {item.showContent && item.id === 'facultades' && (
+              <View>
+                <FlatList
+                  data={facultades}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => <FacultadesCardView nombre={item.nombre} count={item.count} />}
                 />
               </View>
             )}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions, Modal, Pressable, Linking, ImageBackground, StatusBar, Image, ScrollView  } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions, Modal, Pressable, Linking, ImageBackground, StatusBar, Image, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
 import FacuDetails from './Mostrarfacultad';
+import NotificationModal from './Notificacion';
 const { width, height } = Dimensions.get('window');
 
 const Dropdown = ({ title, options, onSelect }) => {
@@ -12,8 +13,6 @@ const Dropdown = ({ title, options, onSelect }) => {
     setIsOpen(false);
     onSelect(option);
   };
-
-
   return (
     <View style={styles.dropdownContainer}>
       <TouchableOpacity onPress={() => setIsOpen(!isOpen)} style={styles.dropdownHeader}>
@@ -50,6 +49,10 @@ const NavigationBar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFacuDetails, setShowFacuDetails] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(6); // Ejemplo de contador
+
+
   const fetchFacultades = async () => {
     try {
       const response = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/facultades/getall');
@@ -61,11 +64,11 @@ const NavigationBar = () => {
 
 
   useEffect(() => {
-    fetchFacultades(); // Primera llamada al cargar el componente
+    fetchFacultades();
 
     const interval = setInterval(() => {
-      fetchFacultades(); // Llamada a la API cada 5 minutos (300000 milisegundos)
-    }, 3000); // Intervalo de 5 minutos en milisegundos
+      fetchFacultades();
+    }, 3000);
 
     return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
   }, []);
@@ -107,7 +110,14 @@ const NavigationBar = () => {
     }
   };
 
+  const handleNotificationModal = () => {
+    setIsNotificationModalOpen(!isNotificationModalOpen);
+  };
 
+  const handleCloseNotificationModal = () => {
+    setIsNotificationModalOpen(false);
+    setUnseenNotificationsCount(0); // Restablecer el contador al cerrar
+  };
 
 
   const handleMenu = () => {
@@ -119,13 +129,28 @@ const NavigationBar = () => {
     setSearchResults([]);
     setSearchText('');
   };
-
-
   const handleFacultadSelect = (facultad) => {
     setSelectedFacultad(facultad);
     setIsMenuOpen(false);
     setShowFacuDetails(true);
 
+    const facultadData = {
+      nombre: facultad.nombre,
+      seccion: 'facultades',
+    };
+    enviarDatosFacultad(facultadData);
+  };
+
+  const enviarDatosFacultad = async (facultadData) => {
+    try {
+      const response = await axios.post(
+        'https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/insert',
+        facultadData
+      );
+      console.log('Respuesta del servidor:', response.data);
+    } catch (error) {
+      console.error('Error al insertar los datos:', error);
+    }
   };
   const handleGoBack = () => {
     setSelectedFacultad(null);
@@ -148,11 +173,11 @@ const NavigationBar = () => {
   const handleFacebookPress = () => {
     Linking.openURL('https://www.facebook.com/uteq.ecuador/');
   };
-  
+
   const handleTikTokPress = () => {
     Linking.openURL('https://www.tiktok.com/@uteq.ec');
   };
-  
+
   const handleTwitterPress = () => {
     Linking.openURL('https://twitter.com/utequevedo');
   };
@@ -242,7 +267,6 @@ const NavigationBar = () => {
             onChangeText={text => setSearchText(text)}
             value={searchText}
           />
-
           <TouchableOpacity
             onPress={handleSearch}
             style={[styles.searchButton, { backgroundColor: 'white' }]}
@@ -251,6 +275,25 @@ const NavigationBar = () => {
             <Icon name="search" size={20} color="#46741e" />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={handleNotificationModal}
+          style={styles.extraButton}
+        >
+          <Icon name="bell" size={20} color="#46741e" />
+          {unseenNotificationsCount > 0 && (
+            <View style={styles.notificationCount}>
+              <Text style={styles.notificationCountText}>
+                {unseenNotificationsCount}
+              </Text>
+            </View>
+            )}
+          </TouchableOpacity>
+          <NotificationModal
+        isVisible={isNotificationModalOpen}
+        onClose={handleCloseNotificationModal}
+        unseenNotificationsCount={unseenNotificationsCount}
+      />
+
       </View>
 
 
@@ -645,7 +688,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 25,
     marginHorizontal: 10, // Espacio entre los botones
-    backgroundColor: '#1DA1F2', 
+    backgroundColor: '#1DA1F2',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -655,8 +698,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 15,
-    
+
   },
+  extraButton: {
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginLeft: 8,
+    paddingVertical: 10,
+    backgroundColor: 'white',
+  },
+  notificationCount: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#ff0000',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationCountText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+
 });
 
 export default NavigationBar;

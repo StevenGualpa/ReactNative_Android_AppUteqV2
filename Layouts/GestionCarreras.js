@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Alert,RefreshControl  } from 'react-native';
+import { View, FlatList, ActivityIndicator, TouchableOpacity, Alert,RefreshControl  } from 'react-native';
 import { Card, Text, Image, Icon } from 'react-native-elements';
 import axios from 'axios';
 import EditarCarreraModal from './EditCarreras';
 import { id } from 'date-fns/locale';
+import {stylesGestionCrr} from './Styles/Styles'
 
 const GestionCarreras = () => {
   const [loading, setLoading] = useState(true);
@@ -88,8 +89,8 @@ const GestionCarreras = () => {
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
-        Lista de Carreras:
+      <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10 ,color:'#46741e',textAlign:'center'}}>
+        Lista de Carreras
       </Text>
       <FlatList
         data={carreras}
@@ -100,19 +101,19 @@ const GestionCarreras = () => {
             onRefresh={onRefresh}
           />}
         renderItem={({ item }) => (
-          <Card containerStyle={styles.card}>
+          <Card containerStyle={stylesGestionCrr.card}>
             <Image source={{ uri: item.imageURL }} style={{ width: '100%', height: 200, borderTopLeftRadius: 10, borderTopRightRadius: 10 }} />
             <Card.Title>{item.nombre}</Card.Title>
             <Card.Divider />
             <Text>{item.descripcion.substring(0, 50)}...</Text>
-            <View style={styles.buttonsContainer}>
-              <TouchableOpacity style={styles.editButton} onPress={() => handleEditarCarrera(item)}>
+            <View style={stylesGestionCrr.buttonsContainer}>
+              <TouchableOpacity style={stylesGestionCrr.editButton} onPress={() => handleEditarCarrera(item)}>
                 <Icon name="edit" type="font-awesome" color="#fff" />
-                <Text style={styles.buttonText}>Editar</Text>
+                <Text style={stylesGestionCrr.buttonText}>Editar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(item.ID)}>
+              <TouchableOpacity style={stylesGestionCrr.deleteButton} onPress={() => confirmDelete(item.ID)}>
                 <Icon name="trash" type="font-awesome" color="#fff" />
-                <Text style={styles.buttonText}>Eliminar</Text>
+                <Text style={stylesGestionCrr.buttonText}>Eliminar</Text>
               </TouchableOpacity>
             </View>
           </Card>
@@ -132,34 +133,5 @@ const GestionCarreras = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 10,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  editButton: {
-    backgroundColor: '#4caf50',
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 5,
-  },
-  deleteButton: {
-    backgroundColor: '#f44336',
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    marginLeft: 5,
-  },
-});
 
 export default GestionCarreras;

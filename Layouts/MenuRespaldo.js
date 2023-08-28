@@ -3,18 +3,34 @@ import { View, StyleSheet, ScrollView, Dimensions, Text } from 'react-native';
 import ModalContenido from './ModalContenido';
 import ModalFacultades from './ModalFacu';
 import ModalUsuario from './ModalUsuario'
-import { BotonContenido, BotonFacultades, BotonUsuarios, BotonCarreras, BotonEstadisticas} from './Components/cardsmenu';
+import { BotonContenido, BotonFacultades, BotonUsuarios, BotonCarreras, BotonEstadisticas
+, BotonSGA} from './Components/cardsmenu';
 import ModalCarrera from './ModalCarreras';
 import { useNavigation } from "@react-navigation/native";
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
+import { Alert } from 'react-native';
+import { Linking } from 'react-native';
+import {stylesMenuR} from './Styles/Styles'
+
+
 const { width } = Dimensions.get('window');
 
 const MenuComple = () => {
+  const { user } = useContext(AuthContext);
   const cardWidthMenu = (width - 70) / 2;
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalFacultadesVisible, setModalFacultadesVisible] = useState(false);
   const [isModalUsuarioVisible, setModalUsuarioVisible] = useState(false);
   const [ismodalcarreravisible, setModalCarrera]=useState(false);
   const navigation = useNavigation();
+
+  let userTipo = null; // Valor inicial si el usuario no está autenticado
+
+  if (user) {
+    userTipo = user.rol;
+  }
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -30,33 +46,38 @@ const MenuComple = () => {
 
   const handleCardPress=()=> {
       navigation.navigate("Estadisticas");
-      console.log('Abrir Crear');
+  };
+  const handleAbrirSga=()=> {
+    Linking.openURL('https://sga.uteq.edu.ec/loginsga?ret=/')
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Menú</Text>
+    <ScrollView contentContainerStyle={stylesMenuR.container}>
+      <View style={stylesMenuR.header}>
+        <Text style={stylesMenuR.headerText}>Menú</Text>
       </View>
-      <View style={styles.column}>
-        <View style={styles.cardContainer}>
-          <BotonContenido onPress={toggleModal} />
+      <View style={stylesMenuR.column}>
+        <View style={stylesMenuR.cardContainer}>
+          <BotonContenido onPress={toggleModal} usuarioTipo={userTipo} />
         </View>
-        <View style={styles.cardContainer}>
-          <BotonFacultades onPress={toggleModalFacultades} />
+        <View style={stylesMenuR.cardContainer}>
+          <BotonFacultades onPress={toggleModalFacultades} usuarioTipo={userTipo} />
         </View>        
       </View>
-      <View style={styles.column}>
-        <View style={styles.cardContainer}>
-          <BotonCarreras onPress={toggleModalCarrea} />
+      <View style={stylesMenuR.column}>
+        <View style={stylesMenuR.cardContainer}>
+          <BotonCarreras onPress={toggleModalCarrea} usuarioTipo={userTipo} />
         </View>
-        <View style={styles.cardContainer}>
-          <BotonUsuarios onPress={toggleModalUsuario} />
+        <View style={stylesMenuR.cardContainer}>
+          <BotonUsuarios onPress={toggleModalUsuario} usuarioTipo={userTipo} />
         </View>                
       </View>
-      <View style={styles.column}>
-        <View style={styles.cardContainer}>
-          <BotonEstadisticas onPress={handleCardPress} />
+      <View style={stylesMenuR.column}>
+        <View style={stylesMenuR.cardContainer}>
+          <BotonEstadisticas onPress={handleCardPress} usuarioTipo={userTipo} />
+        </View>  
+        <View style={stylesMenuR.cardContainer}>
+          <BotonSGA onPress={handleAbrirSga} usuarioTipo={userTipo} />
         </View>                
       </View>
       
@@ -68,32 +89,5 @@ const MenuComple = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flexDirection: 'column',
-    backgroundColor: '#f5f6fa',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#46741e',
-  },
-  column: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  cardContainer: {
-    marginBottom: 20,
-    width:150,
-    backgroundColor: '#f5f6fa',
-  },
-});
 
 export default MenuComple;

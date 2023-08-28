@@ -2,6 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Dimensions, Alert,ActivityIndicator } from 'react-native';
 const { width, height } = Dimensions.get('window');
+import {stylesCrearC} from './Styles/Styles'
 
 export function Contenido() {
   const tituloRef = useRef(null);
@@ -174,57 +175,57 @@ export function Contenido() {
     if (selectedType == 'Tiktok') {
       return (
         <>
-          <View style={styles.contentContainer}>
-            <Text style={styles.label}>Titulo</Text>
-            <View style={styles.textBoxContainer}>
+          <View style={stylesCrearC.contentContainer}>
+            <Text style={stylesCrearC.label}>Titulo</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder="Ingrese el titulo"
                 ref={tituloRef}
-                style={styles.textBox}
+                style={stylesCrearC.textBox}
                 value={titulo}
                 onChangeText={setTitulo}
               />
             </View>
-            <Text style={styles.label}>Descripción</Text>
-            <View style={styles.textBoxContainer}>
+            <Text style={stylesCrearC.label}>Descripción</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder="Ingrese descripcion"
                 ref={descripcionRef}
                 multiline
-                style={styles.textBoxDescri}
+                style={stylesCrearC.textBoxDescri}
                 value={descripcion}
                 onChangeText={setDescripcion}
               />
             </View>
-            <Text style={styles.label}>Url</Text>
-            <View style={styles.textBoxContainer}>
+            <Text style={stylesCrearC.label}>Url</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder="Ingrese el Url"
                 ref={urlRef}
-                style={styles.textBoxUrl}
+                style={stylesCrearC.textBoxUrl}
                 value={url_video}
                 onChangeText={seturl_video}
 
               />
             </View>
-            <Text style={styles.label}>Imagen</Text>
-            <View style={styles.textBoxContainer}>
+            <Text style={stylesCrearC.label}>Imagen</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder='Ingrese el URL de la imagen'
-                style={styles.textBoxurl_imageb}
+                style={stylesCrearC.textBoxurl_imageb}
                 ref={url_imagebRef}
                 value={url_imageb}
                 onChangeText={seturl_imageb}
               />
             </View>
-            <View style={styles.containerStch}>
+            <View style={stylesCrearC.containerStch}>
       <TouchableOpacity
-        style={[styles.switchContainer, isOn ? styles.switchOn : styles.switchOff]}
+        style={[stylesCrearC.switchContainer, isOn ? stylesCrearC.switchOn : stylesCrearC.switchOff]}
         onPress={handleToggleSwitch}
       >
-        <View style={isOn ? styles.toggleOn : styles.toggleOff} />
+        <View style={isOn ? stylesCrearC.toggleOn : stylesCrearC.toggleOff} />
       </TouchableOpacity>
-      <Text style={styles.text}>Icono de Tiktok</Text>
+      <Text style={stylesCrearC.text}>Icono de Tiktok</Text>
     </View>
           </View >
         </>
@@ -233,56 +234,56 @@ export function Contenido() {
     else if (selectedType == 'Youtube') {
       return (
         <>
-          <View style={styles.contentContainer}>
-            <Text style={styles.label}>Titulo</Text>
-            <View style={styles.textBoxContainer}>
+          <View style={stylesCrearC.contentContainer}>
+            <Text style={stylesCrearC.label}>Titulo</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder="Ingrese el titulo"
                 ref={tituloRef}
-                style={styles.textBox}
+                style={stylesCrearC.textBox}
                 value={titulo}
                 onChangeText={setTitulo}
               />
             </View>
-            <Text style={styles.label}>Descripción</Text>
-            <View style={styles.textBoxContainer}>
+            <Text style={stylesCrearC.label}>Descripción</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder="Ingrese descripcion"
                 ref={descripcionRef}
                 multiline
-                style={styles.textBoxDescri}
+                style={stylesCrearC.textBoxDescri}
                 value={descripcion}
                 onChangeText={setDescripcion}
               />
             </View>
-            <Text style={styles.label}>Url</Text>
-            <View style={styles.textBoxContainer}>
+            <Text style={stylesCrearC.label}>Url</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder="Ingrese el Url"
                 ref={urlRef}
-                style={styles.textBoxUrl}
+                style={stylesCrearC.textBoxUrl}
                 value={url_video}
                 onChangeText={seturl_video}
               />
             </View>
-            <Text style={styles.label}>Imagen</Text>
-            <View style={styles.textBoxContainer}>
+            <Text style={stylesCrearC.label}>Imagen</Text>
+            <View style={stylesCrearC.textBoxContainer}>
               <TextInput
                 placeholder='Ingrese el URL de la imagen'
-                style={styles.textBoxurl_imageb}
+                style={stylesCrearC.textBoxurl_imageb}
                 ref={url_imagebRef}
                 value={url_imageb}
                 onChangeText={seturl_imageb}
               />
             </View>
-            <View style={styles.containerStch}>
+            <View style={stylesCrearC.containerStch}>
       <TouchableOpacity
-        style={[styles.switchContainer, isOn ? styles.switchOn : styles.switchOff]}
+        style={[stylesCrearC.switchContainer, isOn ? stylesCrearC.switchOn : stylesCrearC.switchOff]}
         onPress={handleToggleSwitch}
       >
-        <View style={isOn ? styles.toggleOn : styles.toggleOff} />
+        <View style={isOn ? stylesCrearC.toggleOn : stylesCrearC.toggleOff} />
       </TouchableOpacity>
-      <Text style={styles.text}>Icono de Youtube</Text>
+      <Text style={stylesCrearC.text}>Icono de Youtube</Text>
     </View>
           </View>
         </>
@@ -292,37 +293,37 @@ export function Contenido() {
   }
 
   return (
-    <View style={styles.container}>
-      <View id="Encabezado" style={styles.container2}>
-        <Text style={styles.tituloTexto}>Contenido</Text>
+    <View style={stylesCrearC.container}>
+      <View id="Encabezado" style={stylesCrearC.container2}>
+        <Text style={stylesCrearC.tituloTexto}>Contenido</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.radioContainer}>
+      <ScrollView contentContainerStyle={stylesCrearC.scrollContainer}>
+      <View style={stylesCrearC.radioContainer}>
         <TouchableOpacity
-          style={[styles.radio, selectedType === 'Tiktok' && styles.radioSelected]}
+          style={[stylesCrearC.radio, selectedType === 'Tiktok' && stylesCrearC.radioSelected]}
           onPress={() => handleRadioButtonPress('Tiktok')}
         >
-          {selectedType === 'Tiktok' && <View style={styles.radioInner} />}
+          {selectedType === 'Tiktok' && <View style={stylesCrearC.radioInner} />}
         </TouchableOpacity>
-        <Text style={styles.radioLabel}>Tiktok</Text>
+        <Text style={stylesCrearC.radioLabel}>Tiktok</Text>
         <TouchableOpacity
-          style={[styles.radio, selectedType === 'Youtube' && styles.radioSelected]}
+          style={[stylesCrearC.radio, selectedType === 'Youtube' && stylesCrearC.radioSelected]}
           onPress={() => handleRadioButtonPress('Youtube')}
         >
-          {selectedType === 'Youtube' && <View style={styles.radioInner} />}
+          {selectedType === 'Youtube' && <View style={stylesCrearC.radioInner} />}
         </TouchableOpacity>
-        <Text style={styles.radioLabel}>Youtube</Text>
+        <Text style={stylesCrearC.radioLabel}>Youtube</Text>
       </View>
       {tikYou()}
       <TouchableOpacity
-    style={[styles.publicarButton, isButtonPressed && styles.disabledButton]}
+    style={[stylesCrearC.publicarButton, isButtonPressed && stylesCrearC.disabledButton]}
     onPress={handlePublicar}
     disabled={isButtonPressed} // Deshabilitar el botón si ya ha sido presionado
   >
-    <Text style={styles.publicarButtonText}>Publicar</Text>
+    <Text style={stylesCrearC.publicarButtonText}>Publicar</Text>
 </TouchableOpacity>
 {isLoading && (
-      <View style={styles.loadingOverlay}>
+      <View style={stylesCrearC.loadingOverlay}>
         <ActivityIndicator size="large" color="#46741e" />
       </View>
     )}
@@ -330,194 +331,4 @@ export function Contenido() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#f5f6fa',
-    alignItems: 'center',
-    
-    paddingBottom: height * 0.1, // Ajustar el espacio inferior
-  },
-  container2: {
-    alignItems: 'center',
-    marginBottom: height * 0.02,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    alignItems: 'center',
-  },
-  encabezadoTexto: {
-    fontSize: width * 0.04,
-    color: '#d5d3e0',
-  },
-  tituloTexto: {
-    fontSize: width * 0.09,
-    color: '#46741e',
-    fontWeight: 'bold',
-    marginTop: height * 0.01,
-  },
-  contentContainer: {
-    width: width * 0.9,
-    marginTop: height * 0.002,
-  },
-  label: {
-    fontSize: width * 0.05,
-    color: 'black',
-    fontWeight: 'bold',
-    marginBottom: height * 0.02,
-    marginTop: height * 0.03,
-  },
-  textBoxContainer: {
-    backgroundColor: 'white',
-    borderRadius: 7,
-    marginTop: height * 0.001,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  textBox: {
-    fontSize: width * 0.04,
-    borderWidth: 0,
-    color: 'black',
-    padding: width * 0.03,
-    borderRadius: width * 0.1,
-  },
-  textBoxDescri: {
-    fontSize: width * 0.04,
-    color: 'black',
-    padding: width * 0.03,
-    borderRadius: width * 0.1,
-    height: height * 0.2,
-    textAlignVertical: 'top',
-  },
-  textBoxUrl: {
-    fontSize: width * 0.04,
-    borderWidth: 0,
-    color: 'black',
-    padding: width * 0.03,
-    borderRadius: width * 0.1,
-  },
-  textBoxurl_imageb: {
-    fontSize: width * 0.04,
-    borderWidth: 0,
-    color: 'black',
-    padding: width * 0.03,
-    borderRadius: width * 0.1,
-  },
-  publicarButton: {
-    backgroundColor: '#46741e',
-    borderRadius: width * 0.1,
-    width: width * 0.5,
-    alignSelf: 'center',
-    marginTop: height * 0.05,
-    paddingVertical: height * 0.02,
-  },
-  publicarButtonText: {
-    fontSize: width * 0.05,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  radioContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  radio: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: 'gray',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  radioSelected: {
-    borderColor: '#46b41e',
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#46b41e',
-  },
-  radioLabel: {
-    fontSize: 16,
-    color: 'gray',
-    marginRight: 25,
-  },
-  selectImageButton: {
-    backgroundColor: '#46741e',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    marginTop: 10,
-    width: 150,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  selectImageButtonText: {
-    fontSize: 15,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  containerStch: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 19,
-  },
-  text: {
-    fontSize: 16,
-    marginLeft: 6,
-  },
-  switchContainer: {
-    width: 60,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#ddd',
-    paddingHorizontal: 2,
-  },
-  switchOn: {
-    backgroundColor: '#46b41e',
-  },
-  switchOff: {
-    backgroundColor: '#ddd',
-  },
-  toggleOn: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: 'white',
-    alignSelf: 'flex-end',
-    margin: 2,
-  },
-  toggleOff: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: 'white',
-    alignSelf: 'flex-start',
-    margin: 2,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Color de fondo semitransparente
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-});
-
 export default Contenido;

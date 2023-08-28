@@ -5,15 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
-  StyleSheet,
-  Dimensions,
   ScrollView,
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
+import {stylesRegister} from './Styles/Styles'
 
-const { width, height } = Dimensions.get('window');
 
 const RegistroModal = ({ visible, onClose }) => {
   const [email, setEmail] = useState('');
@@ -58,12 +56,12 @@ const RegistroModal = ({ visible, onClose }) => {
     if (selectedType === 'publico') {
       return (
         <>
-          <View style={styles.inputContainer}>
-            <Icon name="user" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="user" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Nombre"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               onChangeText={(value) => {
                 if (isValidName(value)) {
                   setNombre(value);
@@ -72,12 +70,12 @@ const RegistroModal = ({ visible, onClose }) => {
               value={nombre}
             />
           </View>
-          <View style={styles.inputContainer}>
-            <Icon name="user" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="user" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Apellido"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               onChangeText={(value) => {
                 if (isValidApellido(value)) {
                   setApellido(value);
@@ -86,28 +84,28 @@ const RegistroModal = ({ visible, onClose }) => {
               value={apellido}
             />
           </View>
-          <View style={styles.inputContainer}>
-            <Icon name="envelope" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="envelope" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Correo"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               onChangeText={setEmail}
               value={email}
             />
           </View>
-          <View style={styles.inputContainer}>
-            <Icon name="lock" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="lock" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Clave"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               secureTextEntry={!showPassword}
               onChangeText={setClave}
               value={clave}
             />
             <TouchableOpacity
-              style={styles.showPasswordButton}
+              style={stylesRegister.showPasswordButton}
               onPress={() => setShowPassword(!showPassword)}
             >
               <Icon name={showPassword ? 'eye-slash' : 'eye'} size={20} color="gray" />
@@ -118,39 +116,39 @@ const RegistroModal = ({ visible, onClose }) => {
     } else if (selectedType === 'institucional') {
       return (
         <>
-          <View style={styles.inputContainer}>
-            <Icon name="envelope" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="envelope" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Correo"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               onChangeText={setEmail}
               value={email}
             />
           </View>
-          <View style={styles.inputContainer}>
-            <Icon name="lock" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="lock" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Clave"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               secureTextEntry={!showPassword}
               onChangeText={setClave}
               value={clave}
             />
             <TouchableOpacity
-              style={styles.showPasswordButton}
+              style={stylesRegister.showPasswordButton}
               onPress={() => setShowPassword(!showPassword)}
             >
               <Icon name={showPassword ? 'eye-slash' : 'eye'} size={20} color="gray" />
             </TouchableOpacity>
           </View>
-          <View style={styles.inputContainer}>
-            <Icon name="lock" size={20} color="gray" style={styles.inputIcon} />
+          <View style={stylesRegister.inputContainer}>
+            <Icon name="lock" size={20} color="gray" style={stylesRegister.inputIcon} />
             <TextInput
               placeholder="Repetir Clave"
               placeholderTextColor="gray"
-              style={styles.textInput}
+              style={stylesRegister.textInput}
               secureTextEntry={!showPassword}
               onChangeText={setClaveRepetida}
               value={claveRepetida}
@@ -202,29 +200,29 @@ const RegistroModal = ({ visible, onClose }) => {
 
       //AQUI REGISTRAR COMO INVITADO
       // Realizar el registro público mediante POST al web service
-      const endpoint = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/registercorreocode';
       const data = {
         nombre,
         apellido,
         email,
         password: clave,
         rol: 'invitado',
-        verificado: true,
+
       };
 
       axios
-        .post(endpoint, data)
+        .post('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/registercorreocode', data)
         .then((response) => {
-          
-          Alert.alert("Informacion","Usted se ha registrado con exito",[{ text: 'Aceptar', onPress: handleCloseAllModals }])
-        
           console.log('Registro exitoso:', response.data);
+          const userId = response.data.data.ID;
+          setUserId(userId);
+          setOpenVerificationModal(true);
         })
         .catch((error) => {
           console.error('Error al registrar:', error);
           setMessage('Error al registrar. Por favor, inténtalo de nuevo.');
         });
-    } else if (selectedType === 'institucional') {
+      }
+    else if (selectedType === 'institucional') {
       // Validaciones para el registro institucional
       if (!clave.trim() || !claveRepetida.trim()) {
         setMessage('Por favor, completa todos los campos.');
@@ -246,11 +244,12 @@ const RegistroModal = ({ visible, onClose }) => {
 
       //ESTO NO TOCAR SINO NO REGISTRA INSTITUCIONAL
       const data = {
+        nombre: 'UTEQ-sino',
         email,
         password: clave,
         rol: 'Institucional',
       };
-    
+
       axios
         .post('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/registercorreocode', data)
         .then((response) => {
@@ -271,7 +270,6 @@ const RegistroModal = ({ visible, onClose }) => {
       setMessage('Por favor, ingresa el código de verificación.');
       return;
     }
-
     axios
       .put(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/verifyUser/${userId}/${verificationCode}`)
       .then((response) => {
@@ -302,43 +300,56 @@ const RegistroModal = ({ visible, onClose }) => {
     setMessage('');
     setVerificationCode('');
     setUserId(null);
-
     // Cerrar el modal principal (RegistroModal)
     onClose();
   };
+  const handleCloseModalPin= () =>
+  {
+    onClose();
+    setEmail('');
+    setSelectedType('institucional');
+    setNombre('');
+    setApellido('');
+    setClave('');
+    setClaveRepetida('');
+    setShowPassword(false);
+    setMessage('');
+    setVerificationCode('');
+    setUserId(null);
 
+  }
   return (
     <>
       <Modal visible={visible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Registro</Text>
-              <View style={styles.radioContainer}>
+        <View style={stylesRegister.modalContainer}>
+          <ScrollView contentContainerStyle={stylesRegister.scrollViewContent}>
+            <View style={stylesRegister.modalContent}>
+              <Text style={stylesRegister.modalTitle}>Registro</Text>
+              <View style={stylesRegister.radioContainer}>
                 <TouchableOpacity
-                  style={[styles.radio, selectedType === 'institucional' && styles.radioSelected]}
+                  style={[stylesRegister.radio, selectedType === 'institucional' && stylesRegister.radioSelected]}
                   onPress={() => handleRadioButtonPress('institucional')}
                 >
-                  {selectedType === 'institucional' && <View style={styles.radioInner} />}
+                  {selectedType === 'institucional' && <View style={stylesRegister.radioInner} />}
                 </TouchableOpacity>
-                <Text style={styles.radioLabel}>Institucional</Text>
+                <Text style={stylesRegister.radioLabel}>Institucional</Text>
                 <TouchableOpacity
-                  style={[styles.radio, selectedType === 'publico' && styles.radioSelected]}
+                  style={[stylesRegister.radio, selectedType === 'publico' && stylesRegister.radioSelected]}
                   onPress={() => handleRadioButtonPress('publico')}
                 >
-                  {selectedType === 'publico' && <View style={styles.radioInner} />}
+                  {selectedType === 'publico' && <View style={stylesRegister.radioInner} />}
                 </TouchableOpacity>
-                <Text style={styles.radioLabel}>Público</Text>
+                <Text style={stylesRegister.radioLabel}>Público</Text>
               </View>
               {renderPublicoFields()}
-              {message ? <Text style={styles.errorMessage}>{message}</Text> : null}
-              <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                <Icon name="user-plus" size={20} color="white" style={styles.registerButtonIcon} />
-                <Text style={styles.registerButtonText}>Registrar</Text>
+              {message ? <Text style={stylesRegister.errorMessage}>{message}</Text> : null}
+              <TouchableOpacity style={stylesRegister.registerButton} onPress={handleRegister}>
+                <Icon name="user-plus" size={20} color="white" style={stylesRegister.registerButtonIcon} />
+                <Text style={stylesRegister.registerButtonText}>Registrar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                <Icon name="times" size={20} color="white" style={styles.closeButtonIcon} />
-                <Text style={styles.closeButtonText}>Cerrar</Text>
+              <TouchableOpacity style={stylesRegister.closeButton} onPress={handleCloseModalPin}>
+                <Icon name="times" size={20} color="white" style={stylesRegister.closeButtonIcon} />
+                <Text style={stylesRegister.closeButtonText}>Cerrar</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -346,22 +357,22 @@ const RegistroModal = ({ visible, onClose }) => {
       </Modal>
       {/* Modal de verificación */}
       <Modal visible={openVerificationModal} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Verificación de Usuario</Text>
-            <View style={styles.inputContainer}>
-              <Icon name="key" size={20} color="gray" style={styles.inputIcon} />
+        <View style={stylesRegister.modalContainer}>
+          <View style={stylesRegister.modalContent}>
+            <Text style={stylesRegister.modalTitle}>Verificación de Usuario</Text>
+            <View style={stylesRegister.inputContainer}>
+              <Icon name="key" size={20} color="gray" style={stylesRegister.inputIcon} />
               <TextInput
                 placeholder="Código de verificación"
                 placeholderTextColor="gray"
-                style={styles.textInput}
+                style={stylesRegister.textInput}
                 onChangeText={setVerificationCode}
                 value={verificationCode}
               />
             </View>
-            {message ? <Text style={styles.errorMessage}>{message}</Text> : null}
-            <TouchableOpacity style={styles.registerButton} onPress={handleVerification}>
-              <Text style={styles.registerButtonText}>Validar Usuario</Text>
+            {message ? <Text style={stylesRegister.errorMessage}>{message}</Text> : null}
+            <TouchableOpacity style={stylesRegister.registerButton} onPress={handleVerification}>
+              <Text style={stylesRegister.registerButtonText}>Validar Usuario</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -370,123 +381,6 @@ const RegistroModal = ({ visible, onClose }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    width: width * 0.9,
-    maxHeight: height * 1,
-    borderRadius: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  radioContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  radio: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: 'gray',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  radioSelected: {
-    borderColor: '#46b41e',
-  },
-  radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#46b41e',
-  },
-  radioLabel: {
-    fontSize: 16,
-    color: 'gray',
-    marginRight: 25,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    marginBottom: 20,
-  },
-  inputIcon: {
-    marginRight: 10,
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 16,
-    color: 'black',
-    paddingVertical: 10,
-  },
-  showPasswordButton: {
-    padding: 10,
-    marginRight: 5,
-  },
-  registerButton: {
-    backgroundColor: '#46b41e',
-    borderRadius: 8,
-    paddingVertical: 12,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  registerButtonText: {
-    fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  registerButtonIcon: {
-    marginRight: 5,
-  },
-  closeButton: {
-    backgroundColor: 'gray',
-    borderRadius: 8,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  closeButtonIcon: {
-    marginRight: 5,
-  },
-  errorMessage: {
-    fontSize: 16,
-    color: 'red',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+
 
 export default RegistroModal;

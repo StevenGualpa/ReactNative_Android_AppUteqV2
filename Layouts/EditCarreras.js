@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert, ScrollView, Dimensions } from 'react-native';
 import axios from 'axios';
-
+import {stylesEditCrr} from './Styles/Styles'
 const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
   const [editNombre, setEditNombre] = useState(carrera ? carrera.nombre : '');
   const [editDescripcion, setEditDescripcion] = useState(carrera ? carrera.descripcion : '');
@@ -37,19 +37,19 @@ const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
   const renderDropdown = () => {
     return (
       <Modal visible={dropdownVisible} transparent onRequestClose={() => setDropdownVisible(false)}>
-        <View style={styles.dropdownContainer}>
-          <View style={styles.ContenedorFacultades}>
-            <Text style={styles.facultadHeaderText}>Facultades</Text>
-            <ScrollView style={styles.scrollView}>
+        <View style={stylesEditCrr.dropdownContainer}>
+          <View style={stylesEditCrr.ContenedorFacultades}>
+            <Text style={stylesEditCrr.facultadHeaderText}>Facultades</Text>
+            <ScrollView style={stylesEditCrr.scrollView}>
               {facultades.map((facultad, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={styles.dropdownItem}
+                  style={stylesEditCrr.dropdownItem}
                   onPress={() => {
                     setSelectedFacultad(facultad.ID);
                     setDropdownVisible(false);
                   }}>
-                  <Text style={styles.dropdownText}>{facultad.nombre}</Text>
+                  <Text style={stylesEditCrr.dropdownText}>{facultad.nombre}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -126,49 +126,49 @@ const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
 
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Editar Carrera</Text>
-          <Text style={styles.modalLabel}>Nombre:</Text>
+      <View style={stylesEditCrr.modalContainer}>
+        <View style={stylesEditCrr.modalContent}>
+          <Text style={stylesEditCrr.modalTitle}>Editar Carrera</Text>
+          <Text style={stylesEditCrr.modalLabel}>Nombre:</Text>
           <TextInput
-            style={styles.modalInput}
+            style={stylesEditCrr.modalInput}
             value={editNombre}
             onChangeText={setEditNombre}
             placeholder="Nombre de la carrera"
           />
-          <Text style={styles.modalLabel}>Descripción:</Text>
+          <Text style={stylesEditCrr.modalLabel}>Descripción:</Text>
           <TextInput
-            style={styles.modalInput}
+            style={stylesEditCrr.modalInput}
             value={editDescripcion}
             onChangeText={setEditDescripcion}
             multiline
             placeholder="Descripción de la carrera"
           />
-          <Text style={styles.modalLabel}>URL de la imagen:</Text>
+          <Text style={stylesEditCrr.modalLabel}>URL de la imagen:</Text>
           <TextInput
-            style={styles.modalInput}
+            style={stylesEditCrr.modalInput}
             value={editUrlImagen}
             onChangeText={setEditUrlImagen}
             placeholder="Ingrese la URL de la imagen"
           />
-          <Text style={styles.modalLabel}>URL del sitio web:</Text>
+          <Text style={stylesEditCrr.modalLabel}>URL del sitio web:</Text>
           <TextInput
-            style={styles.modalInput}
+            style={stylesEditCrr.modalInput}
             value={editUrlSitioWeb}
             onChangeText={setEditUrlSitioWeb}
             placeholder="Ingrese la URL del sitio web"
           />
-          <Text style={styles.modalLabel}>Facultad:</Text>
-          <TouchableOpacity style={styles.facultadSelector} onPress={() => setDropdownVisible(true)}>
-            <Text style={styles.facultadText}>{selectedFacultad ? getFacultadName(selectedFacultad) : 'Selecciona una facultad'}</Text>
+          <Text style={stylesEditCrr.modalLabel}>Facultad:</Text>
+          <TouchableOpacity style={stylesEditCrr.facultadSelector} onPress={() => setDropdownVisible(true)}>
+            <Text style={stylesEditCrr.facultadText}>{selectedFacultad ? getFacultadName(selectedFacultad) : 'Selecciona una facultad'}</Text>
           </TouchableOpacity>
           {renderDropdown()}
-          <View style={styles.modalButtonContainer}>
-            <TouchableOpacity style={styles.modalButton} onPress={handleSave}>
-              <Text style={styles.modalButtonText}>Guardar</Text>
+          <View style={stylesEditCrr.modalButtonContainer}>
+            <TouchableOpacity style={stylesEditCrr.modalButton} onPress={handleSave}>
+              <Text style={stylesEditCrr.modalButtonText}>Guardar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={onClose}>
-              <Text style={styles.modalButtonText}>Cancelar</Text>
+            <TouchableOpacity style={stylesEditCrr.modalButton} onPress={onClose}>
+              <Text style={stylesEditCrr.modalButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -177,103 +177,6 @@ const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 20,
-    width: '90%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#46741e',
-    textAlign: 'center',
-  },
-  modalLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#46741e',
-  },
-  modalInput: {
-    backgroundColor: '#F2F2F2',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 10,
-  },
-  modalButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  modalButton: {
-    backgroundColor: '#46741e',
-    borderRadius: 4,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 10,
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  dropdownContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dropdownItem: {
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    margin: 5,
-    borderRadius: 5,
-    alignItems: 'center',
-    elevation: 15,
-    marginBottom: 10,
-  },
-  dropdownText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  facultadSelector: {
-    backgroundColor: '#F2F2F2',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 10,
-  },
-  facultadText: {
-    fontSize: 16,
-  },
-  ContenedorFacultades: {
-    borderWidth: 1,
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    padding: 5,
-    width: '95%',
-    borderRadius: 15,
-    
-  },
-  scrollView: {
-    width: '100%',
-  },
-  facultadHeaderText: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    margin: 15,
-    color: '#46741e',
-  },
-});
+
 
 export default EditarCarreraModal;

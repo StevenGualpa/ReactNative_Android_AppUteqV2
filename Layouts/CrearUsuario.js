@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Dimensions, ScrollView, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
+import {stylesCrearU} from './Styles/Styles'
 
 const AppUsuario = () => {
     const [nombre, setNombre] = useState('');
@@ -141,15 +142,15 @@ const AppUsuario = () => {
         
         };
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Agregar Usuario</Text>
+        <View style={stylesCrearU.container}>
+            <Text style={stylesCrearU.header}>Agregar Usuario</Text>
             <View style={{ width: 340, marginBottom: 35 }}>
-                <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                    <View style={styles.form}>
-                        <View style={styles.fieldContainer}>
-                            <Text style={styles.fieldTitle}>Nombre</Text>
+                <ScrollView contentContainerStyle={stylesCrearU.scrollViewContent}>
+                    <View style={stylesCrearU.form}>
+                        <View style={stylesCrearU.fieldContainer}>
+                            <Text style={stylesCrearU.fieldTitle}>Nombre</Text>
                             <TextInput
-                                style={styles.input}
+                                style={stylesCrearU.input}
                                 placeholder="Ingrese Nombre"
                                 value={nombre}
                                 onChangeText={(value) => {
@@ -159,11 +160,11 @@ const AppUsuario = () => {
                                 }}
                             />
                         </View>
-                        <Text style={styles.textSeparator} />
-                        <View style={styles.fieldContainer}>
-                            <Text style={styles.fieldTitle}>Apellidos</Text>
+                        <Text style={stylesCrearU.textSeparator} />
+                        <View style={stylesCrearU.fieldContainer}>
+                            <Text style={stylesCrearU.fieldTitle}>Apellidos</Text>
                             <TextInput
-                                style={styles.input}
+                                style={stylesCrearU.input}
                                 placeholder="Ingrese Apellidos"
                                 value={apellidos}
                                 onChangeText={(value) => {
@@ -173,30 +174,30 @@ const AppUsuario = () => {
                                 }}
                             />
                         </View>
-                        <Text style={styles.textSeparator} />
-                        <View style={styles.fieldContainer}>
-                            <Text style={styles.fieldTitle}>Correo</Text>
+                        <Text style={stylesCrearU.textSeparator} />
+                        <View style={stylesCrearU.fieldContainer}>
+                            <Text style={stylesCrearU.fieldTitle}>Correo</Text>
                             <TextInput
-                                style={styles.input}
+                                style={stylesCrearU.input}
                                 placeholder="Ingrese Correo electrinico"
                                 multiline
                                 value={correo}
                                 onChangeText={setCorreo}
                             />
                         </View>
-                        <Text style={styles.textSeparator} />
-                        <View style={styles.fieldContainer}>
-                            <Text style={styles.fieldTitle}>Contraseña</Text>
-                            <View style={styles.passwordContainer}>
+                        <Text style={stylesCrearU.textSeparator} />
+                        <View style={stylesCrearU.fieldContainer}>
+                            <Text style={stylesCrearU.fieldTitle}>Contraseña</Text>
+                            <View style={stylesCrearU.passwordContainer}>
                                 <TextInput
-                                    style={styles.input}
+                                    style={stylesCrearU.input}
                                     placeholder="Ingrese Contraseña"
                                     value={contrasena}
                                     secureTextEntry={showPasswordText}
                                     onChangeText={setContrasena}
                                 />
                                 <TouchableOpacity
-                                    style={styles.showPasswordButton}
+                                    style={stylesCrearU.showPasswordButton}
                                     onPress={toggleShowPassword}
                                 >
                                     <Icon
@@ -207,19 +208,19 @@ const AppUsuario = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <Text style={styles.textSeparator} />
-                        <View style={styles.fieldContainer}>
-                            <Text style={styles.fieldTitle}> Repetir Contraseña</Text>
-                            <View style={styles.passwordContainer}>
+                        <Text style={stylesCrearU.textSeparator} />
+                        <View style={stylesCrearU.fieldContainer}>
+                            <Text style={stylesCrearU.fieldTitle}> Repetir Contraseña</Text>
+                            <View style={stylesCrearU.passwordContainer}>
                                 <TextInput
-                                    style={styles.input}
+                                    style={stylesCrearU.input}
                                     placeholder="Repetir Contraseña"
                                     value={rcontrasena}
                                     secureTextEntry={showrPasswordText}
                                     onChangeText={setrContrasena}
                                 />
                                 <TouchableOpacity
-                                    style={styles.showPasswordButton}
+                                    style={stylesCrearU.showPasswordButton}
                                     onPress={toggleShowRepeatPassword}
                                 >
                                     <Icon
@@ -230,30 +231,30 @@ const AppUsuario = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <Text style={styles.textSeparator} />
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.button} onPress={handleGuardarUsuario}>
-                                <Text style={styles.buttonText}>Guardar</Text>
+                        <Text style={stylesCrearU.textSeparator} />
+                        <View style={stylesCrearU.buttonContainer}>
+                            <TouchableOpacity style={stylesCrearU.button} onPress={handleGuardarUsuario}>
+                                <Text style={stylesCrearU.buttonText}>Guardar</Text>
                             </TouchableOpacity>
                         </View>
                         {/* Modal */}
                         <Modal visible={modalVisible} animationType="slide" transparent>
-                            <View style={styles.modalContainer}>
-                                <View style={styles.modalContent}>
-                                    <Text style={styles.modalTitle}>Verificación de Usuario</Text>
-                                    <View style={styles.inputContainer}>
-                                        <Icon name="key" size={20} color="gray" style={styles.inputIcon} />
+                            <View style={stylesCrearU.modalContainer}>
+                                <View style={stylesCrearU.modalContent}>
+                                    <Text style={stylesCrearU.modalTitle}>Verificación de Usuario</Text>
+                                    <View style={stylesCrearU.inputContainer}>
+                                        <Icon name="key" size={20} color="gray" style={stylesCrearU.inputIcon} />
                                         <TextInput
                                             placeholder="Código de verificación"
                                             placeholderTextColor="gray"
-                                            style={styles.textInput}
+                                            style={stylesCrearU.textInput}
                                             onChangeText={setVerificationCode}
                                             value={verificationCode}
                                         />
                                     </View>
 
-                                    <TouchableOpacity style={styles.buttonVf} onPress={handleVerification}>
-                                        <Text style={styles.buttonText}>Validar Usuario</Text>
+                                    <TouchableOpacity style={stylesCrearU.buttonVf} onPress={handleVerification}>
+                                        <Text style={stylesCrearU.buttonText}>Validar Usuario</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -265,118 +266,5 @@ const AppUsuario = () => {
     );
 };
 
-const windowWidth = Dimensions.get('window').width;
-const windowheight = Dimensions.get('window').height;
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-    },
-    header: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        marginBottom: 15,
-        color: '#46741e',
-    },
-    scrollViewContent: {
-        flexGrow: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-    },
-    form: {
-        width: '100%',
-    },
-    fieldContainer: {
-        marginBottom: 10,
-    },
-    fieldTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'black',
-        marginBottom: 2,
-        marginTop: 4,
-    },
-    input: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 8,
-        elevation: 14,
-        padding: 10,
-    },
-    passwordContainer: {
-        position: 'relative',
-    },
-    showPasswordButton: {
-        position: 'absolute',
-        top: 5,
-        right: 10,
-        padding: 10,
-    },
-    buttonContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    button: {
-        backgroundColor: '#46741e',
-        borderRadius: 8,
-        padding: 8,
-        alignItems: 'center',
-        width: windowWidth * 0.5,
-    },
-    buttonVf: {
-        backgroundColor: '#46741e',
-        borderRadius: 8,
-        padding: 8,
-        alignItems: 'center',
-        width: '100%', // Ocupa el ancho completo del modal
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    textSeparator: {
-        height: 20, // Ajusta el valor para el espacio deseado entre los Text
-    },
-    modalContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        width: windowWidth * 0.9,
-        maxHeight: windowheight * 1,
-        borderRadius: 10,
-        paddingVertical: 20,
-        paddingHorizontal: 10,
-    },
-    modalTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    inputIcon: {
-        marginRight: 10,
-    },
-
-    textInput: {
-        flex: 1,
-        fontSize: 16,
-        color: 'black',
-        paddingVertical: 10,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: 'gray',
-        marginBottom: 20,
-    },
-});
 
 export default AppUsuario;

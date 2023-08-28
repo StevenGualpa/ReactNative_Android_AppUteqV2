@@ -26,6 +26,7 @@ import CrearCarreras from "./CrearCarreras";
 import GestionCarreras from "./GestionCarreras";
 import ViewsApp from "./Estadisticas";
 import axios from 'axios';
+import RadiacionScreen from "./Radiacion";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -138,6 +139,18 @@ function MyTabs() {
             headerShown: false,
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name="account" color={color} size={26} />
+            ),
+          }}
+        />
+        {/*El color del circulo no se como le va a hacer cambiar, puede hacer un metodo q jale del webservice un rango y segun ese rango
+          establecer el color */}
+        <Tab.Screen
+          name="Radiación"
+          component={RadiacionScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="circle" color={color} size={26} />
             ),
           }}
         />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,Text,TextInput,TouchableOpacity,ImageBackground,Dimensions,
-  ScrollView,SafeAreaView,
+  View, Text, TextInput, TouchableOpacity, ImageBackground, Dimensions,
+  ScrollView, SafeAreaView, ActivityIndicator,
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,6 +11,7 @@ import messaging from '@react-native-firebase/messaging';
 import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la ruta si es necesario
 import { styles } from './Styles/Styles'; // Ajusta la ruta si es necesario
 import { useAuth } from './AuthContext';
+import ChangePasswordModal from './Cambio'
 
 
 const LoginScreen = () => {
@@ -25,7 +26,18 @@ const LoginScreen = () => {
   const [userID, setUserID] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [changePasswordModalVisible, setChangePasswordModalVisible] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+
+  const openChangePasswordModal = () => {
+    setChangePasswordModalVisible(true);
+  };
+
+  const closeChangePasswordModal = () => {
+    setChangePasswordModalVisible(false);
+  };
   // Obtener el token del dispositivo
   useEffect(() => {
     messaging().getToken().then(setDeviceToken);
@@ -36,16 +48,20 @@ const LoginScreen = () => {
       Alert.alert('Campos vacíos', 'Por favor, completa todos los campos.');
       return;
     }
-
+    setIsButtonDisabled(true); // Deshabilitar el botón
+    setIsLoading(true); // Mostrar la animación de carga
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const allowedDomains = ['uteq.edu.ec', 'gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com', 'outlook.es'];
     const endsWithAllowedDomain = allowedDomains.some((domain) => correo.toLowerCase().endsWith('@' + domain));
-    
+
     if (!emailRegex.test(correo) || !endsWithAllowedDomain) {
+      setIsButtonDisabled(false);
+      setIsLoading(false);
       Alert.alert('Correo inválido', 'Por favor, ingresa un correo válido con uno de los siguientes dominios: @uteq.edu.ec, @gmail.com, @hotmail.com, @yahoo.com, @outlook.com');
       return;
     }
-
+    
     fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/login', {
       method: 'POST',
       headers: {
@@ -59,25 +75,31 @@ const LoginScreen = () => {
     })
       .then(response => response.json())
       .then(data => {
-
-        if (data.usuario.verificado === false) {
-          setUser(data.usuario); // Correcto // Guardar el usuario en el contexto
-          setUserID(data.usuario.ID); // Guardar el ID del usuario
-          setVerificationModalVisible(true); // Mostrar el modal de verificación
-        } 
-        else {
-          if (data.usuario.email === correo && data.usuario.password === contraseña) {
-            setUser(data.usuario); // Correcto // Guardar el usuario en el contexto
-            navigation.navigate('NavigationBar');
+        if (data.usuario && typeof data.usuario.verificado !== 'undefined') {
+          if (data.usuario.verificado === false) {
+            setUserID(data.usuario.ID);
+            setVerificationModalVisible(true);
           } else {
-            console.log('El correo electrónico y la contraseña devueltos no coinciden con los enviados.');
+            if (data.usuario.email === correo && data.usuario.password === contraseña) {
+              setUser(data.usuario); // Correcto // Guardar el usuario en el contexto
+              navigation.navigate('NavigationBar');
+              setCorreo("");
+              setContraseña("");
+            }
           }
-        }       
+        } else {
+          Alert.alert('correo o contraseña incorrecta', 'El correo electrónico y la contraseña devueltos no coinciden con los enviados.');
+        }
+        setIsButtonDisabled(false);
+        setIsLoading(false);
       })
       .catch(error => {
         console.error('Error en el JSON:', error);
+        setIsButtonDisabled(false);
+      setIsLoading(false);
       });
   };
+
 
   const handleRegisterModal = () => {
     setModalVisible(true);
@@ -103,6 +125,7 @@ const LoginScreen = () => {
         if (data.message === "Cuenta verificada") {
           Alert.alert('Verificación exitosa', 'Usuario verificado exitosamente');
           setVerificationModalVisible(false);
+          setUser(data.usuario);
           navigation.navigate('NavigationBar');
         } else if (data.message === "Código caducado. Se ha generado un nuevo código.") {
           Alert.alert('Verificación fallida', 'El código de verificación ha expirado. Se ha generado uno nuevo.');
@@ -117,7 +140,7 @@ const LoginScreen = () => {
         Alert.alert('Error', 'Ocurrió un error durante la verificación. Por favor, inténtalo de nuevo más tarde.');
       });
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
@@ -167,13 +190,25 @@ const LoginScreen = () => {
               />
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={openChangePasswordModal}>
+            <Text style={styles.passwordText}>Has olvidado la contraseña</Text>
+          </TouchableOpacity>
+          <ChangePasswordModal
+            isVisible={changePasswordModalVisible}
+            onClose={closeChangePasswordModal}
+          />
 
           <TouchableOpacity
             style={styles.loginButton}
             onPress={handleLogin}
             activeOpacity={0.7}
+            disabled={isButtonDisabled} // Deshabilitar el botón según el estado
           >
-            <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+            {isLoading ? (
+              <ActivityIndicator color="#46741e" />
+            ) : (
+              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={handleRegisterModal}>
@@ -187,8 +222,6 @@ const LoginScreen = () => {
           />
         </ImageBackground>
       </ScrollView>
-
-
       <VerificationModal
         visible={verificationModalVisible}
         onVerify={handleVerification}

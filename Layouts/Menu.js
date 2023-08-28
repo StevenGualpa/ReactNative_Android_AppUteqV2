@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Dimensions, Text } from 'react-native';
+import { View, ScrollView, Dimensions, Text } from 'react-native';
 import ModalContenido from './ModalContenido';
 import ModalFacultades from './ModalFacu';
 import ModalUsuario from './ModalUsuario'
 import { BotonContenido, BotonFacultades, BotonUsuarios, BotonCarreras } from './Components/cardsmenu';
 import { useNavigation } from "@react-navigation/native";
 import ModalCarrera from './ModalCarreras';
+import {stylesMenu} from './Styles/Styles'
 const { width } = Dimensions.get('window');
 
 const MenuComple = () => {
@@ -31,23 +32,23 @@ const MenuComple = () => {
     setModalCarrera(!ismodalcarreravisible);
   };
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Menú</Text>
+    <ScrollView contentContainerStyle={stylesMenu.container}>
+      <View style={stylesMenu.header}>
+        <Text style={stylesMenu.headerText}>Menú</Text>
       </View>
-      <View style={styles.column}>
-        <View style={styles.cardContainer}>
+      <View style={stylesMenu.column}>
+        <View style={stylesMenu.cardContainer}>
           <BotonContenido onPress={toggleModal} />
         </View>
-        <View style={styles.cardContainer}>
+        <View style={stylesMenu.cardContainer}>
           <BotonFacultades onPress={toggleModalFacultades} />
         </View>        
       </View>
-      <View style={styles.column}>
-        <View style={styles.cardContainer}>
+      <View style={stylesMenu.column}>
+        <View style={stylesMenu.cardContainer}>
           <BotonCarreras onPress={toggleModalCarrea} />
         </View>
-        <View style={styles.cardContainer}>
+        <View style={stylesMenu.cardContainer}>
           <BotonUsuarios onPress={toggleModalUsuario} />
         </View>
                 
@@ -61,31 +62,6 @@ const MenuComple = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flexDirection: 'column',
-    backgroundColor: '#f5f6fa',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#46741e',
-  },
-  column: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  cardContainer: {
-    marginBottom: 20,
-    width:150,
-    backgroundColor: '#f5f6fa',
-  },
-});
+
 
 export default MenuComple;

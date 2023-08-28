@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Keyboard, Platform } from 'react-native';
+import { View, stylesChatheet, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Keyboard, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import axios from 'axios';
-
+import{stylesChat} from'./Styles/Styles';
 const ChatScreen = () => {
   // Estados del componente
   const [message, setMessage] = useState('');
@@ -71,23 +71,23 @@ const ChatScreen = () => {
 
   const renderMessageItem = ({ item }) => (
     // Renderizar cada elemento de mensaje en la lista (mensaje enviado o recibido)
-    <View style={[styles.messageItem, item.isSent ? styles.sentMessage : styles.receivedMessage]}>
-      <Text style={[styles.messageText, item.isSent ? styles.sentMessageText : styles.receivedMessageText]}>{item.text}</Text>
+    <View style={[stylesChat.messageItem, item.isSent ? stylesChat.sentMessage : stylesChat.receivedMessage]}>
+      <Text style={[stylesChat.messageText, item.isSent ? stylesChat.sentMessageText : stylesChat.receivedMessageText]}>{item.text}</Text>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={stylesChat.container}>
       {/* Animación de Lottie */}
       <LottieView
-        style={styles.lottieLogo}
+        style={stylesChat.lottieLogo}
         source={require('./src/animation_lkj5w7te.json')}
         autoPlay
         loop
       />
       {/* Lista de mensajes */}
       <FlatList
-        style={styles.chatContainer}
+        style={stylesChat.chatContainer}
         data={messages}
         renderItem={renderMessageItem}
         keyExtractor={(item, index) => index.toString()}
@@ -99,17 +99,17 @@ const ChatScreen = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={80}
-        style={styles.inputContainer}
+        style={stylesChat.inputContainer}
       >
         <TextInput
-          style={styles.input}
+          style={stylesChat.input}
           placeholder="Escribe tu mensaje..."
           value={message}
           onChangeText={setMessage}
           onSubmitEditing={handleSendButtonPress} // Ocultar el teclado al presionar enviar
         />
         {/* Botón de envío */}
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendButtonPress}>
+        <TouchableOpacity style={stylesChat.sendButton} onPress={handleSendButtonPress}>
           <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -117,85 +117,6 @@ const ChatScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lottieLogo: {
-    width: 200,
-    height: 200,
-  },
-  chatContainer: {
-    flex: 1,
-    width: '100%',
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    backgroundColor: '#f5f5f5',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    marginBottom: 5,
-    marginTop: 7,
-  },
-  sendButton: {
-    backgroundColor: '#46741e',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-  messageItem: {
-    maxWidth: '80%',
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ddd', // Color del borde de la burbuja de chat
-  },
-  sentMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#46b41e',
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 20,
-  },
-  receivedMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#f2f2f2',
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  messageText: {
-    fontSize: 16,
-  },
-  sentMessageText: {
-    color: 'white', // Color del texto de mensaje enviado
-  },
-  receivedMessageText: {
-    color: 'black', // Color del texto de mensaje recibido
-    fontWeight: 'bold', // Puedes ajustar otros estilos según tus preferencias
-  },
-});
+
 
 export default ChatScreen;

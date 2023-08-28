@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Picker } from '@react-native-picker/picker'; 
 import axios from 'axios';
+import {stylesCrearCrr} from './Styles/Styles'
 
 const CrearCarreras = () => {
   const [nombreCarrera, setNombreCarrera] = useState('');
@@ -115,49 +116,49 @@ const CrearCarreras = () => {
   
 
   return (
-    <View style={styles.container}>
-    <Text style={styles.title}>Crear Carrera</Text>
-    <ScrollView contentContainerStyle={styles.scrollContent}>
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>Nombre de la carrera:</Text>
+    <View style={stylesCrearCrr.container}>
+    <Text style={stylesCrearCrr.title}>Crear Carrera</Text>
+    <ScrollView contentContainerStyle={stylesCrearCrr.scrollContent}>
+      <View style={stylesCrearCrr.formContainer}>
+        <Text style={stylesCrearCrr.label}>Nombre de la carrera:</Text>
         <TextInput
-          style={styles.input}
+          style={stylesCrearCrr.input}
           value={nombreCarrera}
           onChangeText={setNombreCarrera}
           placeholder="Ingrese el nombre de la carrera"
         />
 
-        <Text style={styles.label}>Descripción de la carrera:</Text>
+        <Text style={stylesCrearCrr.label}>Descripción de la carrera:</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={[stylesCrearCrr.input, stylesCrearCrr.textArea]}
           value={descripcionCarrera}
           onChangeText={setDescripcionCarrera}
           placeholder="Ingrese la descripción de la carrera"
           multiline
         />
 
-        <Text style={styles.label}>URL de la imagen:</Text>
+        <Text style={stylesCrearCrr.label}>URL de la imagen:</Text>
         <TextInput
-          style={styles.input}
+          style={stylesCrearCrr.input}
           value={urlImagen}
           onChangeText={setUrlImagen}
           placeholder="Ingrese la URL de la imagen"
         />
 
-        <Text style={styles.label}>URL del sitio web:</Text>
+        <Text style={stylesCrearCrr.label}>URL del sitio web:</Text>
         <TextInput
-          style={styles.input}
+          style={stylesCrearCrr.input}
           value={urlSitioWeb}
           onChangeText={setUrlSitioWeb}
           placeholder="Ingrese la URL del sitio web"
         />
 
         {/* Dropdown para seleccionar la facultad */}
-        <Text style={styles.label}>Facultad:</Text>
+        <Text style={stylesCrearCrr.label}>Facultad:</Text>
         <Picker
           selectedValue={facultad}
           onValueChange={(itemValue) => setFacultad(itemValue)}
-          style={styles.dropdown}
+          style={stylesCrearCrr.dropdown}
         >
           <Picker.Item label="Seleccione una facultad" value="" />
           {facultadesList.map((facultadItem) => (
@@ -169,15 +170,15 @@ const CrearCarreras = () => {
           ))}
         </Picker>
 
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.botonGuardar} onPress={handleGuardar}>
-            <Icon name="save" size={20} color="#ffffff" style={styles.icon} />
-            <Text style={styles.botonTexto}>Guardar</Text>
+        <View style={stylesCrearCrr.buttonsContainer}>
+          <TouchableOpacity style={stylesCrearCrr.botonGuardar} onPress={handleGuardar}>
+            <Icon name="save" size={20} color="#ffffff" style={stylesCrearCrr.icon} />
+            <Text style={stylesCrearCrr.botonTexto}>Guardar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.botonLimpiar} onPress={limpiarCampos}>
-            <Icon name="refresh" size={20} color="#ffffff" style={styles.icon} />
-            <Text style={styles.botonTexto}>Limpiar</Text>
+          <TouchableOpacity style={stylesCrearCrr.botonLimpiar} onPress={limpiarCampos}>
+            <Icon name="refresh" size={20} color="#ffffff" style={stylesCrearCrr.icon} />
+            <Text style={stylesCrearCrr.botonTexto}>Limpiar</Text>
           </TouchableOpacity>
         </View>
         </View>
@@ -185,100 +186,4 @@ const CrearCarreras = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f7f7f7',
-    paddingTop: 10,
-  },
-  formContainer: {
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#46741e',
-    textAlign: 'center',
-    paddingHorizontal: 20,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#46741e',
-  },
-  input: {
-    fontSize: 16,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 15,
-    color: '#333333',
-  },
-  textArea: {
-    height: 100,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  botonGuardar: {
-    backgroundColor: '#46741e',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginHorizontal: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  botonLimpiar: {
-    backgroundColor: '#e74c3c',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginHorizontal: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  botonTexto: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  icon: {
-    marginRight: 5,
-  },
-  imagePreview: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  previewImage: {
-    width: 200,
-    height: 200,
-  },
-});
-
-
-
-
 export default CrearCarreras;

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert, Modal, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert, Modal, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import moment from 'moment';
 import 'moment/locale/es';
+import {stylesGestionCn} from './Styles/Styles'
 moment.locale('es');
 const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen, onPressEdit, onDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -158,36 +159,36 @@ const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen
 
   return (
 
-    <View style={styles.card}>
-      <View style={styles.imageContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Image source={{ uri: editeUrlima }} style={styles.logo} />
+    <View style={stylesGestionCn.card}>
+      <View style={stylesGestionCn.imageContainer}>
+        <Text style={stylesGestionCn.title}>{title}</Text>
+        <Image source={{ uri: editeUrlima }} style={stylesGestionCn.logo} />
       </View>
-      <Text style={styles.fecha}>{moment(fecha).format('LL')}</Text>
-      <Text style={styles.description}>{truncatedDescription}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleEdit}>
+      <Text style={stylesGestionCn.fecha}>{moment(fecha).format('LL')}</Text>
+      <Text style={stylesGestionCn.description}>{truncatedDescription}</Text>
+      <View style={stylesGestionCn.buttonContainer}>
+        <TouchableOpacity style={stylesGestionCn.button} onPress={handleEdit}>
           <AntDesign name="edit" size={24} color="#46741e" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleDelete}>
+        <TouchableOpacity style={stylesGestionCn.button} onPress={handleDelete}>
           <FontAwesome name="trash" size={24} color="red" />
         </TouchableOpacity>
       </View>
 
       {/* Modal de edición */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <View style={stylesGestionCn.modalContainer}>
+          <View style={stylesGestionCn.modalContent}>
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Título</Text>
             <TextInput
-              style={styles.input}
+              style={stylesGestionCn.input}
               placeholder="Título"
               value={editedTitle}
               onChangeText={(text) => setEditedTitle(text)}
             />
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Descripción</Text>
             <TextInput
-              style={styles.input}
+              style={stylesGestionCn.input}
               multiline
               placeholder="Descripción"
               value={editedDescription}
@@ -195,24 +196,24 @@ const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen
             />
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>URL</Text>
             <TextInput
-              style={styles.input}
+              style={stylesGestionCn.input}
               placeholder="URL"
               value={editedUrl}
               onChangeText={(text) => setEditedUrl(text)}
             />
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Imagen</Text>
             <TextInput
-              style={styles.input}
+              style={stylesGestionCn.input}
               placeholder="Imagen"
               value={editeUrlima}
               onChangeText={(text) => setEditeUrlima(text)}
             />
-            <View style={styles.modalButtonContainer}>
-              <TouchableOpacity style={styles.modalButton} onPress={handleSave}>
-                <Text style={styles.modalButtonText}>Guardar</Text>
+            <View style={stylesGestionCn.modalButtonContainer}>
+              <TouchableOpacity style={stylesGestionCn.modalButton} onPress={handleSave}>
+                <Text style={stylesGestionCn.modalButtonText}>Guardar</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={handleCancel}>
-                <Text style={styles.modalButtonText}>Cancelar</Text>
+              <TouchableOpacity style={stylesGestionCn.modalButton} onPress={handleCancel}>
+                <Text style={stylesGestionCn.modalButtonText}>Cancelar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -298,10 +299,10 @@ const AppGestion = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Gestión de contenido</Text>
+    <View style={stylesGestionCn.container}>
+      <Text style={stylesGestionCn.header}>Gestión de contenido</Text>
       {loading ? (
-        <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
+        <ActivityIndicator size="large" color="green" style={stylesGestionCn.loadingIndicator} />
       ) : (
         <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           {contentData.map((content) => (
@@ -324,142 +325,6 @@ const AppGestion = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f6fa',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#46741e',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  imageContainer: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  logo: {
 
-    width: 106, // Ajusta el ancho de la imagen según tu preferencia
-    height: 104, // Ajusta el alto de la imagen según tu preferencia
-    borderRadius: 10,
-    borderRadius: 10,
-    resizeMode: 'stretch',
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  title: {
-    marginBottom: 12,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  description: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: 'black',
-  },
-  fecha: {
-    textAlign: 'center',
-    marginBottom: 6,
-    marginTop: 4
-  },
-
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 23,
-  },
-  button: {
-    marginLeft: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 5,
-  },
-  modalButton: {
-    backgroundColor: '#46741e',
-    borderRadius: 4,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 10,
-  },
-  modalButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  saveButton: {
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 5,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  selectImageButton: {
-    backgroundColor: '#46741e',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    marginTop: 10,
-    width: 150,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  selectImageButtonText: {
-    fontSize: 15,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  uploadIcon: {
-    marginRight: 8,
-  },
-});
 
 export default AppGestion;

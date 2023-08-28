@@ -3,12 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Alert
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import EditFacultadModal from './EditFacultad';
 import axios from 'axios';
+import {stylesGestionF} from './Styles/Styles'
 
 const { width } = Dimensions.get('window');
 
 const cardWidth = width - 75;
 
-const FacultadCard = ({ id, nombre, mision, vision, urlVideo, urlFacebook, urlSitioWeb, carreras, onSave }) => {
+const FacultadCard = ({ id, nombre, mision, vision, urlVideo, urlFacebook, urlSitioWeb,correo,latitud,longitud}) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -46,13 +47,13 @@ const FacultadCard = ({ id, nombre, mision, vision, urlVideo, urlFacebook, urlSi
   };
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{nombre}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+    <View style={stylesGestionF.card}>
+      <Text style={stylesGestionF.title}>{nombre}</Text>
+      <View style={stylesGestionF.buttonContainer}>
+        <TouchableOpacity style={stylesGestionF.button} onPress={() => setModalVisible(true)}>
           <AntDesign name="edit" size={24} color="#46741e" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleDelete}>
+        <TouchableOpacity style={stylesGestionF.button} onPress={handleDelete}>
           <FontAwesome name="trash" size={24} color="red" />
         </TouchableOpacity>
       </View>
@@ -70,7 +71,9 @@ const FacultadCard = ({ id, nombre, mision, vision, urlVideo, urlFacebook, urlSi
           urlVideo: urlVideo,
           urlFacebook: urlFacebook,
           urlSitioWeb: urlSitioWeb,
-          carreras: carreras,
+          correo:correo,
+          latitud:latitud,
+          longitud:longitud,
         }}
       />
     </View>
@@ -105,21 +108,15 @@ const GestiFacu = () => {
     fetchFacultades();
   }, []);
 
-  const handleFacultadSave = async (editedFacultad) => {
-    // Aquí puedes implementar la lógica para guardar los cambios en la facultad
-    // Por ejemplo, podrías hacer una solicitud POST a la API para actualizar la facultad
-    console.log('Facultad editada:', editedFacultad);
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Gestión de facultades</Text>
+    <View style={stylesGestionF.container}>
+      <Text style={stylesGestionF.header}>Gestión de facultades</Text>
       <ScrollView
-        contentContainerStyle={styles.scrollViewContent}
+        contentContainerStyle={stylesGestionF.scrollViewContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {loading ? (
-          <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
+          <ActivityIndicator size="large" color="green" style={stylesGestionF.loadingIndicator} />
         ) : (
           facultades.map((facultad) => (
           <FacultadCard
@@ -131,8 +128,9 @@ const GestiFacu = () => {
           urlVideo={facultad.urlVideo}
           urlFacebook={facultad.urlFacebook}
           urlSitioWeb={facultad.UrlSitio}
-          carreras={[]} // Aquí pasamos las carreras correspondientes a la facultad desde la API
-          onSave={handleFacultadSave}
+          correo={facultad.correo}
+          latitud={facultad.latitud}
+          longitud={facultad.longitud}
         />
         ))
         )}
@@ -141,59 +139,6 @@ const GestiFacu = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    paddingTop: 20,
-    paddingHorizontal: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#46741e',
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    alignItems: 'center',
-  },
-  card: {
-    width: cardWidth,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 35,
-    padding: 16,
-    marginBottom: 20,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  button: {
-    marginLeft: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 5,
-  },
-  carreraItem: {
-    marginBottom: 10,
-  },
-  carreraTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  carreraDescription: {
-    fontSize: 16,
-    color: '#555555',
-  },
-});
+
 
 export default GestiFacu;

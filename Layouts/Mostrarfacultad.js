@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  StyleSheet,
+
   Image,
   Linking,
   Modal,
@@ -14,6 +14,7 @@ import {
 import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import {stylesMostrarF}from './Styles/Styles'
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -29,6 +30,7 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
     fetchCarreras();
   }, []);
 
+  
   const handleTabPress = (tab) => {
     setActiveTab(tab);
     if (tab === 'carreras') {
@@ -56,6 +58,20 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
       setLoading(false);
     }
   };
+  const sendEmail = () => {
+    const emailAddress = facultad.correo;
+    const subject = 'Consulta sobre la facultad';
+    const emailUrl = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}`;
+    Linking.openURL(emailUrl);
+  };
+
+  const openGoogleMaps = () => {
+    const latitude = facultad.latitud;
+    const longitude = facultad.longitud;
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    Linking.openURL(googleMapsUrl);
+  };
+
 
   const openCarreraModal = (carrera) => {
     setSelectedCarrera(carrera);
@@ -68,60 +84,72 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={stylesMostrarF.container}>
+      <View style={stylesMostrarF.header}>
         <TouchableOpacity onPress={onGoBack}>
           <Icon name="arrow-back" size={30} color={'#46741e'} />
         </TouchableOpacity>
-        <Text style={styles.title}>{facultad.nombre}</Text>
+        <Text style={stylesMostrarF.title}>{facultad.nombre}</Text>
       </View>
-      <WebView style={styles.video} source={{ uri: facultad.urlVideo }} />
-      <View style={styles.tabs}>
-        <TouchableOpacity onPress={() => handleTabPress('mision')} style={styles.tab}>
+      <WebView style={stylesMostrarF.video} source={{ uri: facultad.urlVideo }} />
+      <View style={stylesMostrarF.tabs}>
+        <TouchableOpacity onPress={() => handleTabPress('mision')} style={stylesMostrarF.tab}>
           <Icon name="book-outline" size={20} color="#46741e" />
-          <Text style={styles.tabText}>MISIÓN</Text>
+          <Text style={stylesMostrarF.tabText}>MISIÓN</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleTabPress('vision')} style={styles.tab}>
+        <TouchableOpacity onPress={() => handleTabPress('vision')} style={stylesMostrarF.tab}>
           <Icon name="eye-outline" size={20} color="#46741e" />
-          <Text style={styles.tabText}>VISIÓN</Text>
+          <Text style={stylesMostrarF.tabText}>VISIÓN</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleTabPress('carreras')} style={styles.tab}>
+        <TouchableOpacity onPress={() => handleTabPress('carreras')} style={stylesMostrarF.tab}>
           <Icon name="school-outline" size={20} color="#46741e" />
-          <Text style={styles.tabText}>CARRERAS</Text>
+          <Text style={stylesMostrarF.tabText}>CARRERAS</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView style={stylesMostrarF.scrollContainer}>
         {activeTab === 'mision' && (
-          <View style={styles.cardView}>
-            <Text style={styles.cardTitle}>MISIÓN</Text>
-            <Text style={styles.cardContent}>{facultad.mision}</Text>
+          <View style={stylesMostrarF.cardView}>
+            <Text style={stylesMostrarF.cardTitle}>MISIÓN</Text>
+            <Text style={stylesMostrarF.cardContent}>{facultad.mision}</Text>
           </View>
         )}
         {activeTab === 'vision' && (
-          <View style={styles.cardView}>
-            <Text style={styles.cardTitle}>VISIÓN</Text>
-            <Text style={styles.cardContent}>{facultad.vision}</Text>
+          <View style={stylesMostrarF.cardView}>
+            <Text style={stylesMostrarF.cardTitle}>VISIÓN</Text>
+            <Text style={stylesMostrarF.cardContent}>{facultad.vision}</Text>
           </View>
         )}
         {activeTab === 'carreras' &&
           carrerasData.map((carrera) => (
             <TouchableOpacity
               key={carrera.id}
-              style={styles.carreraCard}
+              style={stylesMostrarF.carreraCard}
               onPress={() => openCarreraModal(carrera)}
             >
-              <Image source={{ uri: carrera.imageURL }} style={styles.carreraImage} resizeMode="contain" />
-              <Text style={styles.carreraTitle}>{carrera.nombre}</Text>
-              <Text style={styles.carreraDescription}>{carrera.descripcion.substring(0, 120)}... Ver mas</Text>
+              <Image source={{ uri: carrera.imageURL }} style={stylesMostrarF.carreraImage} resizeMode="contain" />
+              <Text style={stylesMostrarF.carreraTitle}>{carrera.nombre}</Text>
+              <Text style={stylesMostrarF.carreraDescription}>{carrera.descripcion.substring(0, 120)}... Ver mas</Text>
             </TouchableOpacity>
           ))}
       </ScrollView>
-      <View style={styles.socialLinks}>
-        <TouchableOpacity style={styles.socialButton} onPress={() => Linking.openURL(facultad.facebookURL)}>
+      <View style={stylesMostrarF.socialLinks}>
+        <TouchableOpacity style={stylesMostrarF.socialButton} onPress={() => Linking.openURL(facultad.facebookURL)}>
           <Icon name="logo-facebook" size={24} color="#3b5998" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton} onPress={() => Linking.openURL(facultad.googleURL)}>
+        <TouchableOpacity style={stylesMostrarF.socialButton} onPress={() => Linking.openURL(facultad.googleURL)}>
           <Icon name="logo-google" size={24} color="#db4437" />
+        </TouchableOpacity>
+        <TouchableOpacity style={[stylesMostrarF.socialButton, stylesMostrarF.gmailButton]} onPress={sendEmail}>
+          <Icon name="mail" size={24} color="#db4437" />
+        </TouchableOpacity>
+      </View>
+      <View style={stylesMostrarF.googleMapsButtonContainer}>
+        <TouchableOpacity
+          style={[stylesMostrarF.googleMapsButton, stylesMostrarF.googleButton]}
+          onPress={openGoogleMaps}
+        >
+          <Icon name="location-outline" size={24} color="#fff" />
+          <Text style={[stylesMostrarF.googleMapsButtonText, stylesMostrarF.googleButtonText]}>Abrir en Google Maps</Text>
         </TouchableOpacity>
       </View>
       <Modal
@@ -131,35 +159,35 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
         onRequestClose={closeCarreraModal}
       >
         {selectedCarrera ? (
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Image source={{ uri: selectedCarrera.imageURL }} style={styles.modalImage} resizeMode="contain" />
-              <Text style={styles.modalTitle}>{selectedCarrera.nombre}</Text>
-              <ScrollView style={styles.modalDescriptionContainer}>
-                <Text style={styles.modalDescription}>{selectedCarrera.descripcion}</Text>
+          <View style={stylesMostrarF.modalContainer}>
+            <View style={stylesMostrarF.modalContent}>
+              <Image source={{ uri: selectedCarrera.imageURL }} style={stylesMostrarF.modalImage} resizeMode="contain" />
+              <Text style={stylesMostrarF.modalTitle}>{selectedCarrera.nombre}</Text>
+              <ScrollView style={stylesMostrarF.modalDescriptionContainer}>
+                <Text style={stylesMostrarF.modalDescription}>{selectedCarrera.descripcion}</Text>
               </ScrollView>
               <TouchableOpacity
-                style={styles.websiteButton}
+                style={stylesMostrarF.websiteButton}
                 onPress={() => Linking.openURL(selectedCarrera.UrlSitioOf)}
               >
-                <View style={styles.buttonContent}>
+                <View style={stylesMostrarF.buttonContent}>
                   <Icon name="globe-outline" size={20} color="#fff" />
-                  <Text style={styles.buttonText}>Visitar Sitio Web</Text>
+                  <Text style={stylesMostrarF.buttonText}>Visitar Sitio Web</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.closeButton}
+                style={stylesMostrarF.closeButton}
                 onPress={closeCarreraModal}
               >
-                <View style={styles.buttonContent}>
+                <View style={stylesMostrarF.buttonContent}>
                   <Icon name="close-outline" size={20} color="#fff" />
-                  <Text style={styles.buttonText}>Cerrar</Text>
+                  <Text style={stylesMostrarF.buttonText}>Cerrar</Text>
                 </View>
               </TouchableOpacity>
             </View>
           </View>
         ) : (
-          <View style={styles.loadingContainer}>
+          <View style={stylesMostrarF.loadingContainer}>
             <ActivityIndicator size="large" color="#4caf50" />
           </View>
         )}
@@ -169,177 +197,6 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
 };
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-  },
-  cardView: {
-    margin: 15,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4caf50', // Green color
-    marginBottom: 5,
-  },
-  cardContent: {
-    fontSize: 16,
-    color: '#333',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  title: {
-    fontSize: 20,
-    marginLeft: 15,
-    fontWeight: 'bold',
-    color: '#46741e', // Title color in green
-  },
-  video: {
-    width: windowWidth,
-    height: 200,
-  },
-  tabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#f9f9f9',
-    elevation: 2,
-  },
-  tab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 15,
-    backgroundColor: '#ffffff',
-    elevation: 15,
-    padding: 10,
-    margin: 5,
-  },
-  tabText: {
-    fontSize: 16,
-    marginLeft: 10,
-    color: '#333',
-  },
-  scrollContainer: {
-    marginTop: 5,
-    flex: 1,
-  },
-  tabContent: {
-    padding: 15,
-    fontSize: 16,
-  },
-  carreraCard: {
-    margin: 15,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 3,
-  },
-  carreraImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 10,
-  },
-  carreraTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-  },
-  carreraDescription: {
-    fontSize: 15,
-    color: '#555',
-  },
-  websiteButton: {
-    backgroundColor: '#ffd700',
-    padding: 10,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  websiteButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  closeButton: {
-    backgroundColor: '#4caf50',
-    padding: 10,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  socialLinks: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-  },
-  socialButton: {
-    padding: 10,
-    borderRadius: 50,
-    backgroundColor: '#fff',
-    elevation: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    width: '95%',
-    borderRadius: 15,
-    padding: 10,
-    alignItems: 'center',
-    elevation: 5,
-  },
-  modalImage: {
-    width: '100%',
-    height: windowWidth - 200,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4caf50',
-    textAlign: 'center',
-  },
-  modalDescriptionContainer: {
-    maxHeight: 350,
-    marginVertical: 10,
-  },
-  modalDescription: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 5,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: '#fff',
-    marginLeft: 5,
-  },
-});
+
 
 export default FacuDetails;
