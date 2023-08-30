@@ -249,7 +249,7 @@ const App = () => {
           { id: 'noticias', title: 'Noticias', icon: 'ios-newspaper', showContent: showNoticias },
           { id: 'revistas', title: 'Revistas', icon: 'ios-albums', showContent: showRevistas },
           { id: 'contenido', title: 'Contenido', icon: 'ios-book', showContent: showContenido },
-          { id: 'facultades', title: 'Facutlades', icon: 'ios-book', showContent: showFacultades },
+          { id: 'facultades', title: 'Facultades', icon: 'ios-school', showContent: showFacultades },
         ]}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (

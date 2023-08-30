@@ -40,15 +40,17 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Email exists:', data);
-                setSavedEmail(email);
-                setStep(2);  // Esta línea se ejecutará solo si response.ok es verdadero
+                setStep(2);
             } else {
-                Alert.alert('Error', 'Ocurrió un error al verificar el correo electrónico.');
+                const responseData = await response.json(); // Obtener los detalles del error desde la respuesta JSON
+                const errorMessage = responseData.error || 'Ocurrió un error al verificar el correo electrónico.';
+                Alert.alert('Error', errorMessage);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
             Alert.alert('Error', 'Ocurrió un error al conectarse al servidor.');
         }
+
     };
 
 
@@ -60,9 +62,9 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
         setSecurityCode('');
         setNewPassword('');
         setConfirmPassword('');
-        
+
     };
-    
+
 
     useEffect(() => {
         if (step === 1) {
@@ -70,53 +72,71 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
         }
     }, [step, savedEmail]);
 
+    const handleChangePassword = async () => {
+        // Validaciones para el cambio de contraseña
+        if (!securityCode || !newPassword || !confirmPassword) {
+            Alert.alert('Error', 'Por favor, completa todos los campos.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            Alert.alert('Error', 'Las contraseñas no coinciden.');
+            return;
+        }
+
+        if (!isValidPassword(newPassword)) {
+            Alert.alert('Contraseña', 'La clave debe tener entre 8 y 15 caracteres y contener letras mayúsculas, minúsculas, números y caracteres especiales.');
+            return;
+        }
+
+        const url = "https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/ChangePassword";
+        const data = {
+            email: email,
+            newPassword: newPassword
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                Alert.alert(
+                    'Éxito',
+                    'Tu contraseña ha sido cambiada exitosamente.',
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: () => {
+                            onClose();
+                            setStep(1);
+                            setEmail('');
+                            setSecurityCode('');
+                            setNewPassword('');
+                            setConfirmPassword('');
+                        },
+                      },
+                    ],
+                  );
+                console.log('Password changed:', responseData);
+            } else {
+                console.error('Error changing password');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     const isValidPassword = (value) => {
         const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+,\-./:;<=>?@[\\\]^_`{|}~]).{8,15}$/;
         return regex.test(value);
     };
-    const Password = isValidPassword(securityCode);
 
-    const handleChangePassword = () => {
-        // Validaciones para el cambio de contraseña
-        if (!securityCode || !newPassword || !confirmPassword) {
-            Alert.alert('Error', 'Por favor, completa todos los campos.');
-        } 
-        
-        else if (newPassword !== confirmPassword) {
-            Alert.alert('Error', 'Las contraseñas no coinciden.');
-        } else {
-            // Realizar el cambio de contraseña aquí
-            Alert.alert('Contraseña Cambiada', 'Tu contraseña ha sido cambiada exitosamente.');
-            onClose();
-        }
-        (async () => {
-            const url = "https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/ChangePassword";
-        
-            const data = {
-                email: email,
-                newPassword:newPassword
-            };
-        
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-        
-                if (response.ok) {
-                    const responseData = await response.json();
-                    console.log('Password changed:', responseData);
-                } else {
-                    console.error('Error changing password');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        })();
-    };
 
     return (
         <Modal visible={isVisible} transparent animationType="slide">

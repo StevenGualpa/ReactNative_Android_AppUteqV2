@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-
   Image,
   Linking,
   Modal,
@@ -58,6 +57,7 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
       setLoading(false);
     }
   };
+
   const sendEmail = () => {
     const emailAddress = facultad.correo;
     const subject = 'Consulta sobre la facultad';
@@ -133,10 +133,10 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
           ))}
       </ScrollView>
       <View style={stylesMostrarF.socialLinks}>
-        <TouchableOpacity style={stylesMostrarF.socialButton} onPress={() => Linking.openURL(facultad.facebookURL)}>
+        <TouchableOpacity style={stylesMostrarF.socialButton} onPress={() => Linking.openURL(facultad.urlFacebook)}>
           <Icon name="logo-facebook" size={24} color="#3b5998" />
         </TouchableOpacity>
-        <TouchableOpacity style={stylesMostrarF.socialButton} onPress={() => Linking.openURL(facultad.googleURL)}>
+        <TouchableOpacity style={stylesMostrarF.socialButton} onPress={() => Linking.openURL(facultad.UrlSitio)}>
           <Icon name="logo-google" size={24} color="#db4437" />
         </TouchableOpacity>
         <TouchableOpacity style={[stylesMostrarF.socialButton, stylesMostrarF.gmailButton]} onPress={sendEmail}>

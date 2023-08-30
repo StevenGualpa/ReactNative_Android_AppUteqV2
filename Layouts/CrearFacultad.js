@@ -88,6 +88,7 @@ const FacuCreate = () => {
       });
   };
 
+  //falta agregar los dominios permitidos
   const isEmailValid = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);

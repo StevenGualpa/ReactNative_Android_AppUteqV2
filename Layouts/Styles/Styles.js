@@ -1060,9 +1060,20 @@ export const stylesCrearf = StyleSheet.create({
   heading: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#46741e',
+    color: '#46b41e',
     textAlign:'center',
     marginBottom: 20,
+  },
+  inputCoord:{
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    color: '#333333',
+    width: '70%'
   },
   input: {
     backgroundColor: '#FFFFFF',
@@ -1091,9 +1102,11 @@ export const stylesCrearf = StyleSheet.create({
     color: '#333333',
   },
   mapButton: {
-    backgroundColor: '#46741e',
+    backgroundColor: '#46b41e',
     borderRadius: 8,
     padding: 10,
+    marginLeft:5,
+    marginBottom:15
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -1105,7 +1118,7 @@ export const stylesCrearf = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#46741e',
+    backgroundColor: '#46b41e',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -1132,7 +1145,26 @@ export const stylesCrearf = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)', // Color de fondo semitransparente
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
+  modalContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  getCoordinatesButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  getCoordinatesButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginLeft: 10,
+  },
 });
 export const stylesCrearU = StyleSheet.create({
   container: {

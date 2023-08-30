@@ -142,8 +142,9 @@ function MyTabs() {
             ),
           }}
         />
+       {/*
         {/*El color del circulo no se como le va a hacer cambiar, puede hacer un metodo q jale del webservice un rango y segun ese rango
-          establecer el color */}
+          establecer el color 
         <Tab.Screen
           name="Radiación"
           component={RadiacionScreen}
@@ -153,7 +154,7 @@ function MyTabs() {
               <MaterialCommunityIcons name="circle" color={color} size={26} />
             ),
           }}
-        />
+        />*/}
       </Tab.Navigator>
     </>
   );
