@@ -93,31 +93,38 @@ const App = () => {
         // Conteo de noticias más vistas
         const noticiasData = noticiasResponse.data.analitics;
         const noticiasCountByNombre = noticiasData.reduce((acc, item) => {
-          const nombre = item.nombre;
-          acc[nombre] = (acc[nombre] || 0) + 1;
-          return acc;
+            const nombre = item.nombre;
+            acc[nombre] = (acc[nombre] || 0) + 1;
+            return acc;
         }, {});
         
         let maxNoticias = { nombre: '', count: 0 };
-        let minNoticias = { nombre: '', count: Infinity };
+        let minNoticias = { nombre: '', count: Number.MAX_VALUE };  // Usando MAX_VALUE como valor inicial para el conteo mínimo.
         
         for (const nombre in noticiasCountByNombre) {
-          if (noticiasCountByNombre[nombre] > maxNoticias.count) {
-            maxNoticias = { nombre, count: noticiasCountByNombre[nombre] };
-          }
-          if (noticiasCountByNombre[nombre] < minNoticias.count) {
-            minNoticias = { nombre, count: noticiasCountByNombre[nombre] };
-          }
-        } if (maxNoticias.nombre !== 'Noticias') {
+            if (nombre !== 'Noticias') {
+                if (noticiasCountByNombre[nombre] > maxNoticias.count) {
+                    maxNoticias = { nombre, count: noticiasCountByNombre[nombre] };
+                }
+                if (noticiasCountByNombre[nombre] < minNoticias.count) {
+                    minNoticias = { nombre, count: noticiasCountByNombre[nombre] };
+                }
+            }
+        }
+        
+        // Asumo que tienes funciones de estado como setNoticiaMasVista y setNoticiaMenosVista
+        
+        if (maxNoticias.nombre && maxNoticias.nombre !== 'Noticias') {
             setNoticiaMasVista(maxNoticias);
-          } else {
+        } else {
             setNoticiaMasVista({ nombre: 'Noticia más vista no disponible', count: 0 });
-          }
-          if (minNoticias.nombre !== 'Noticias') {
+        }
+        
+        if (minNoticias.nombre && minNoticias.nombre !== 'Noticias') {
             setNoticiaMenosVista(minNoticias);
-          } else {
+        } else {
             setNoticiaMenosVista({ nombre: 'Noticia menos vista no disponible', count: 0 });
-          }
+        }
 
         // Conteo de revistas más y menos vistas
             const revistasData = revistasResponse.data.analitics;
@@ -249,7 +256,7 @@ const App = () => {
           { id: 'noticias', title: 'Noticias', icon: 'ios-newspaper', showContent: showNoticias },
           { id: 'revistas', title: 'Revistas', icon: 'ios-albums', showContent: showRevistas },
           { id: 'contenido', title: 'Contenido', icon: 'ios-book', showContent: showContenido },
-          { id: 'facultades', title: 'Facultades', icon: 'ios-school', showContent: showFacultades },
+          { id: 'facultades', title: 'Facultades', icon: 'ios-book', showContent: showFacultades },
         ]}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (

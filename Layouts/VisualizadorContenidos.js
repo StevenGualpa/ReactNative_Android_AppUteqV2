@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Linking, RefreshControl, ActivityIndicator } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
 import moment from 'moment';
 import 'moment/locale/es'; 
 moment.locale('es');
 
-import { stylesVisContenidos } from './Styles/Styles'; // Ajusta la ruta si es necesario
-
+import { stylesVisContenidos } from './Styles/Styles';
+import axios from 'axios';
 
 const ContentCard = () => {
   const [contentData, setContentData] = useState([]);
@@ -35,8 +35,21 @@ const ContentCard = () => {
     setRefreshing(false);
   };
 
-  const handleReadMore = (link) => {
+  const handleReadMore = (link, title) => {
     Linking.openURL(link);
+    registerView(title);
+  };
+
+  const registerView = async (nombre) => {
+    try {
+      console.log("Registrando vista de contenido:", { seccion: "Contenido", nombre: nombre });
+      await axios.post('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/insert', {
+        seccion: "Contenido",
+        nombre: nombre
+      });
+    } catch (error) {
+      console.error("Error registering view: ", error);
+    }
   };
 
   return (
@@ -55,10 +68,10 @@ const ContentCard = () => {
               <Image source={{ uri: content.url_imageb }} style={stylesVisContenidos.logo} />
             </View>
             <View>
-            <Text style={stylesVisContenidos.fecha}>{moment(content.UpdatedAt).format('LL')}</Text>
+              <Text style={stylesVisContenidos.fecha}>{moment(content.created_at).format('LL')}</Text>
               <Text style={stylesVisContenidos.description}>{content.descripcion}</Text>
             </View>
-            <TouchableOpacity style={stylesVisContenidos.button} onPress={() => handleReadMore(content.url_video)}>
+            <TouchableOpacity style={stylesVisContenidos.button} onPress={() => handleReadMore(content.url_video, content.titulo)}>
               <Icon name="external-link" size={20} color="white" />
               <Text style={stylesVisContenidos.buttonText}>Ver contenido</Text>
             </TouchableOpacity>

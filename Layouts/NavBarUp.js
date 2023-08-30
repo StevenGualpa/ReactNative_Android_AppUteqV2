@@ -50,7 +50,7 @@ const NavigationBar = () => {
   const [showFacuDetails, setShowFacuDetails] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-  const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(6); // Ejemplo de contador
+  const [unseenNotificationsCount, setUnseenNotificationsCount] = useState(4); // Ejemplo de contador
 
 
   const fetchFacultades = async () => {
@@ -170,6 +170,10 @@ const NavigationBar = () => {
   const handleCloseInfoModal = () => {
     setIsInfoModalOpen(false); // Cierra el modal
   };
+  const handle360Press = () => {
+    Linking.openURL('https://tour-virtual.uteq.edu.ec/');
+  };
+
   const handleFacebookPress = () => {
     Linking.openURL('https://www.facebook.com/uteq.ecuador/');
   };
@@ -240,20 +244,32 @@ const NavigationBar = () => {
               <Dropdown title="Facultades" options={facultades} onSelect={handleFacultadSelect} />
             </View>
             <View style={styles.line} />
-            <View style={styles.infoButtonRow}>
-              <TouchableOpacity onPress={handleInfoButtonPress} style={styles.infoButton}>
-                <Icon name="info-circle" size={30} color="#46741e" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleFacebookPress} style={styles.Buttonface}>
-                <Icon name="facebook" size={25} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleTikTokPress} style={styles.ButtonTik}>
-                <Icon name="tiktok" size={25} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleTwitterPress} style={styles.Buttontwt}>
-                <Icon name="twitter" size={25} color="white" />
+            <View style={styles.imageAndTextContainer}>
+            <TouchableOpacity onPress={handle360Press}style={styles.boton360}>
+              <Image source={require('./iconos/360grados.png')} style={styles.centeredImage} />
+              <Text style={styles.conoceText}>Conoce la UTEQ 360°</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.infoButtonRow}>
+              <TouchableOpacity onPress={handleInfoButtonPress} style={styles.infoButton}>
+                <Icon name="info-circle" size={18} color="#46741e" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleFacebookPress} style={styles.Buttonface}>
+                <Icon name="facebook" size={18} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleTikTokPress} style={styles.ButtonTik}>
+                <Icon name="tiktok" size={18} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleTwitterPress} style={styles.Buttontwt}>
+                <Icon name="twitter" size={18} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleTwitterPress} style={styles.intaButton}>
+                <Icon name="instagram" size={18} color="white" />
+              </TouchableOpacity>
+            </View>
+            <Text style={{ color: 'white', fontSize: 10, marginBottom: 20 }}
+            >© 2023 Universidad Técnica Estatal de Quevedo</Text>
+
           </ImageBackground>
         </Modal>
         <TouchableOpacity onPress={handleMenu} style={styles.menuButton}>
@@ -275,6 +291,11 @@ const NavigationBar = () => {
             <Icon name="search" size={20} color="#46741e" />
           </TouchableOpacity>
         </View>
+        {/*       PROGRAMAR ESTA PARTE   0
+        
+        
+         */}
+        {/*
         <TouchableOpacity
           onPress={handleNotificationModal}
           style={styles.extraButton}
@@ -287,7 +308,7 @@ const NavigationBar = () => {
               </Text>
             </View>
             )}
-          </TouchableOpacity>
+          </TouchableOpacity>*/}
           <NotificationModal
         isVisible={isNotificationModalOpen}
         onClose={handleCloseNotificationModal}
@@ -503,7 +524,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#00A200',
     borderRadius: 8,
     overflow: 'hidden',
-
   },
   dropdownHeader: {
     flexDirection: 'row',
@@ -518,7 +538,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dropdownContent: {
-    maxHeight: 200,
+    maxHeight: 240,
     paddingHorizontal: 10,
   },
   dropdownOption: {
@@ -580,12 +600,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     resizeMode: 'stretch'
   },
-  line: {
-    width: '80%',
-    height: 3,
-    backgroundColor: 'white', // Color de la línea
-    marginBottom: '2%',
-  },
+  
   infoModalContainer: {
     flex: 1,
     alignItems: 'center',
@@ -650,33 +665,70 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 5,
   },
-  infoButton: {
-    width: 40,
-    height: 40,
+  line: {
+    width: '80%',
+    height: 3,
+    backgroundColor: 'white', // Color de la línea
+    marginBottom: '4%',
+  },
+ imageAndTextContainer: {
+    alignItems: 'center', 
+    justifyContent: 'center',
+  },
+boton360:{
+    alignItems:'center'
+  },
+centeredImage: {
+    width: 40, 
+    height: 40, 
+    resizeMode: 'stretch',
+    marginBottom: 1, // minimal space between the image and text
+  },
+ conoceText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color:'white',
+    marginBottom:25,
+  },
+infoButton: {
+    width: 25,
+    height: 25,
     borderRadius: 25,
-    marginHorizontal: 10, // Espacio entre los botones
+    marginHorizontal: 5, // Espacio entre los botones
     backgroundColor: 'white', // Color de fondo de Facebook
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
     flexDirection: 'row',
   },
-  Buttonface: {
-    width: 40,
-    height: 40,
+  intaButton: {
+    width: 25,
+    height: 25,
     borderRadius: 25,
-    marginHorizontal: 10, // Espacio entre los botones
-    backgroundColor: 'blue', // Color de fondo de Facebook
+    marginHorizontal: 5, // Espacio entre los botones
+    backgroundColor: '#E1306C', // Color de fondo de Facebook
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+    flexDirection: 'row',
+  },
+  Buttonface: {
+    width: 25,
+    height: 25,
+    borderRadius: 25,
+    marginHorizontal: 5, // Espacio entre los botones
+    backgroundColor: '#3b5998', // Color de fondo de Facebook
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
     flexDirection: 'row',
   },
   ButtonTik: {
-    width: 40,
-    height: 40,
+    width: 25,
+    height: 25,
     borderRadius: 25,
-    marginHorizontal: 10, // Espacio entre los botones
+    marginHorizontal: 5, // Espacio entre los botones
     backgroundColor: '#000', // Color de fondo de Facebook
     justifyContent: 'center',
     alignItems: 'center',
@@ -684,20 +736,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   Buttontwt: {
-    width: 40,
-    height: 40,
+    width: 25,
+    height: 25,
     borderRadius: 25,
-    marginHorizontal: 10, // Espacio entre los botones
+    marginHorizontal: 5, // Espacio entre los botones
     backgroundColor: '#1DA1F2',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
     flexDirection: 'row',
   },
+ 
   infoButtonRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 15,
+    marginBottom: 5,
 
   },
   extraButton: {

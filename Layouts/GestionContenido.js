@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView, Alert, Modal, TextInpu
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import moment from 'moment';
 import 'moment/locale/es';
-import {stylesGestionCn} from './Styles/Styles'
+import { stylesGestionCn } from './Styles/Styles'
 moment.locale('es');
 const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen, onPressEdit, onDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,6 +15,7 @@ const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen
   const [originalDescription, setOriginalDescription] = useState(description);
   const [originalUrl, setOriginalUrl] = useState(url);
   const [originakima, setOriginalima] = useState(url_imagen);
+  const [isSaving, setIsSaving] = useState(false);
 
 
   // Función para manejar la acción de editar contenido
@@ -24,6 +25,8 @@ const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen
 
   // Función para manejar la acción de guardar los cambios al editar contenido
   const handleSave = async () => {
+    setIsSaving(true);
+
     // Validar campos vacíos y URL válida
     if (!editedTitle.trim() || !editedDescription.trim() || !isValidUrl(editedUrl) || !isValidUrl(editeUrlima)) {
       Alert.alert('Error', 'Por favor, complete todos los campos y asegúrese de ingresar una URL válida.');
@@ -100,7 +103,8 @@ const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen
               onPressEdit(id, editedData);
             } catch (error) {
               console.error('Error al guardar los cambios:', error);
-
+            } finally {
+              setIsSaving(false);
             }
           },
         },
@@ -209,10 +213,18 @@ const ContentCard = ({ id, title, description, fecha, contenido, url, url_imagen
               onChangeText={(text) => setEditeUrlima(text)}
             />
             <View style={stylesGestionCn.modalButtonContainer}>
-              <TouchableOpacity style={stylesGestionCn.modalButton} onPress={handleSave}>
-                <Text style={stylesGestionCn.modalButtonText}>Guardar</Text>
+              <TouchableOpacity
+                style={stylesGestionCn.modalButton}
+                onPress={handleSave}
+                disabled={isSaving}  // Desactivar el botón mientras se está guardando
+              >
+                {isSaving ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : (
+                  <Text style={stylesGestionCn.modalButtonText}>Guardar</Text>
+                )}
               </TouchableOpacity>
-              <TouchableOpacity style={stylesGestionCn.modalButton} onPress={handleCancel}>
+              <TouchableOpacity style={stylesGestionCn.modalButtonCancel} onPress={handleCancel}>
                 <Text style={stylesGestionCn.modalButtonText}>Cancelar</Text>
               </TouchableOpacity>
             </View>

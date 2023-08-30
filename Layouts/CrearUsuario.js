@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Dimensions, ScrollView, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Dimensions, ScrollView, Modal,ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
-import {stylesCrearU} from './Styles/Styles'
+import { stylesCrearU } from './Styles/Styles'
 
 const AppUsuario = () => {
     const [nombre, setNombre] = useState('');
@@ -17,6 +17,7 @@ const AppUsuario = () => {
     const [showrPasswordText, setShowrPasswordText] = useState(true);
     const [showRepeatPassword, setShowRepeatPassword] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     // Función para ocultar el modal
@@ -50,7 +51,7 @@ const AppUsuario = () => {
     };
 
     const handleGuardarUsuario = () => {
-
+        setLoading(true);
         // Validar campos vacíos
         if (!nombre.trim() || !apellidos.trim() || !correo.trim() || !contrasena.trim() || !rcontrasena.trim()) {
             Alert.alert('Campos vacíos', 'Por favor, complete todos los campos antes de guardar el usuario.');
@@ -106,10 +107,12 @@ const AppUsuario = () => {
                 const userId = response.data.data.ID;
                 setUserId(userId);
                 setModalVisible(true);
+                setLoading(false);
             })
             .catch((error) => {
                 console.error('Error al registrar:', error);
-                setMessage('Error al registrar. Por favor, inténtalo de nuevo.');
+                Alert.alert('Error','Error al registrar. Por favor, inténtalo de nuevo.');
+                setLoading(false);
             });
 
         // Aquí puedes realizar el guardado del usuario en tu base de datos o realizar la acción necesaria
@@ -123,24 +126,24 @@ const AppUsuario = () => {
     };
     const handleVerification = () => {
         if (!verificationCode.trim()) {
-            Alert.alert('Verifiación','Por favor, ingresa el código de verificación.');
+            Alert.alert('Verifiación', 'Por favor, ingresa el código de verificación.');
             return;
-          }
-      
-          axios
+        }
+
+        axios
             .put(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/verifyUser/${userId}/${verificationCode}`)
             .then((response) => {
-              console.log('Usuario verificado exitosamente:', response.data);
-              // Aquí puedes realizar acciones adicionales en caso de que el usuario haya sido verificado exitosamente.
-              // Por ejemplo, redireccionar a otra pantalla, mostrar un mensaje de éxito, etc.
-              Alert.alert('Éxito', 'Usuario verificado exitosamente.', [{ text: 'Aceptar', onPress: setModalVisible(false) }]);
+                console.log('Usuario verificado exitosamente:', response.data);
+                // Aquí puedes realizar acciones adicionales en caso de que el usuario haya sido verificado exitosamente.
+                // Por ejemplo, redireccionar a otra pantalla, mostrar un mensaje de éxito, etc.
+                Alert.alert('Éxito', 'Usuario verificado exitosamente.', [{ text: 'Aceptar', onPress: setModalVisible(false) }]);
             })
             .catch((error) => {
-              console.error('Error al verificar usuario:', error);
-              Alert.alert('Verificación','Código de verificación incorrecto. Por favor, inténtalo de nuevo.');
+                console.error('Error al verificar usuario:', error);
+                Alert.alert('Verificación', 'Código de verificación incorrecto. Por favor, inténtalo de nuevo.');
             });
-        
-        };
+
+    };
     return (
         <View style={stylesCrearU.container}>
             <Text style={stylesCrearU.header}>Agregar Usuario</Text>
@@ -179,7 +182,7 @@ const AppUsuario = () => {
                             <Text style={stylesCrearU.fieldTitle}>Correo</Text>
                             <TextInput
                                 style={stylesCrearU.input}
-                                placeholder="Ingrese Correo electrinico"
+                                placeholder="Ingrese Correo electronico"
                                 multiline
                                 value={correo}
                                 onChangeText={setCorreo}
@@ -233,8 +236,16 @@ const AppUsuario = () => {
                         </View>
                         <Text style={stylesCrearU.textSeparator} />
                         <View style={stylesCrearU.buttonContainer}>
-                            <TouchableOpacity style={stylesCrearU.button} onPress={handleGuardarUsuario}>
-                                <Text style={stylesCrearU.buttonText}>Guardar</Text>
+                            <TouchableOpacity
+                                style={stylesCrearU.button}
+                                onPress={handleGuardarUsuario}
+                                disabled={loading} // Desactiva el botón cuando loading es verdadero
+                            >
+                                {
+                                    loading
+                                        ? <ActivityIndicator size="small" color="#FFFFFF" /> // Muestra un indicador de actividad cuando loading es verdadero
+                                        : <Text style={stylesCrearU.buttonText}>Guardar</Text>
+                                }
                             </TouchableOpacity>
                         </View>
                         {/* Modal */}

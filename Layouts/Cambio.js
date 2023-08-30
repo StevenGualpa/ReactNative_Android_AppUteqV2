@@ -10,10 +10,39 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
     const [newPassword, setNewPassword] = useState('');
     const [savedEmail, setSavedEmail] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [emailExists, setEmailExists] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isPasswordVisibleR, setIsPasswordVisibleR] = useState(false);
 
+    const onSynchronize =async()=>{
+        const url = "https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/VerifyUserCodeCorreo";
+        const data = {
+            email: email,
+            code: securityCode
+        };
 
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
+            if (response.ok) {
+                const responseData = await response.json();
+                Alert.alert( 'Éxito', 'Se a reenviado un nuevo codigo a tu correo',);
+                console.log('Codigo enviado:', responseData);
+            } else {
+                const responseData = await response.json();
+                const errorMessage = responseData.error || 'Ocurrió un error al verificar el correo electrónico.';
+                Alert.alert('Error', errorMessage);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+
+    }
 
     const handleNext = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,7 +70,37 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
                 const data = await response.json();
                 console.log('Email exists:', data);
                 setStep(2);
-            } else {
+            } else if (response.status === 400) {
+                const url = "https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/VerifyUserCodeCorreo";
+                const data = {
+                    email: email,
+                    code: securityCode
+                };
+        
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+        
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        console.log('Codigo enviado:', responseData);
+                    } else {
+                        const responseData = await response.json();
+                        const errorMessage = responseData.error || 'Ocurrió un error al verificar el correo electrónico.';
+                        Alert.alert('Error', errorMessage);
+                        setStep(2);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+        
+            }
+            else{
                 const responseData = await response.json(); // Obtener los detalles del error desde la respuesta JSON
                 const errorMessage = responseData.error || 'Ocurrió un error al verificar el correo electrónico.';
                 Alert.alert('Error', errorMessage);
@@ -110,26 +169,27 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
                     'Éxito',
                     'Tu contraseña ha sido cambiada exitosamente.',
                     [
-                      {
-                        text: 'Ok',
-                        onPress: () => {
-                            onClose();
-                            setStep(1);
-                            setEmail('');
-                            setSecurityCode('');
-                            setNewPassword('');
-                            setConfirmPassword('');
+                        {
+                            text: 'Ok',
+                            onPress: () => {
+                                onClose();
+                                setStep(1);
+                                setEmail('');
+                                setSecurityCode('');
+                                setNewPassword('');
+                                setConfirmPassword('');
+                            },
                         },
-                      },
                     ],
-                  );
+                );
                 console.log('Password changed:', responseData);
             } else {
-                console.error('Error changing password');
+                Alert.alert('Error', 'El codigo ya expirado');
             }
         } catch (error) {
             console.error('Error:', error);
         }
+       
     };
 
     const isValidPassword = (value) => {
@@ -177,17 +237,23 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
                                     value={securityCode}
                                     onChangeText={setSecurityCode}
                                 />
+                                <TouchableOpacity onPress={onSynchronize}>
+                                    <Icon name="refresh" size={20} color="#999"/>
+                                </TouchableOpacity>
                             </View>
                             <View style={stylesRetablecer.inputContainer}>
                                 <Icon name="lock" size={20} color="#999" style={stylesRetablecer.inputIcon} />
                                 <TextInput
                                     style={stylesRetablecer.input}
                                     placeholder="Contraseña Nueva"
-                                    secureTextEntry
+                                    secureTextEntry={!isPasswordVisible} // Paso 3
                                     placeholderTextColor="gray"
                                     value={newPassword}
                                     onChangeText={setNewPassword}
                                 />
+                                <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                                    <Icon name={isPasswordVisible ? "eye-slash" : "eye"} size={20} color="#999" />
+                                </TouchableOpacity>
                             </View>
                             <View style={stylesRetablecer.inputContainer}>
                                 <Icon name="lock" size={20} color="#999" style={stylesRetablecer.inputIcon} />
@@ -195,10 +261,13 @@ const ChangePasswordModal = ({ isVisible, onClose }) => {
                                     style={stylesRetablecer.input}
                                     placeholderTextColor="gray"
                                     placeholder="Repetir Contraseña Nueva"
-                                    secureTextEntry
+                                    secureTextEntry={!isPasswordVisibleR} // Paso 3
                                     value={confirmPassword}
                                     onChangeText={setConfirmPassword}
                                 />
+                                <TouchableOpacity onPress={() => setIsPasswordVisibleR(!isPasswordVisibleR)}>
+                                    <Icon name={isPasswordVisibleR ? "eye-slash" : "eye"} size={20} color="#999" />
+                                </TouchableOpacity>
                             </View>
                             <TouchableOpacity style={stylesRetablecer.button} onPress={handleChangePassword}>
                                 <Text style={stylesRetablecer.buttonText}>Cambiar Contraseña</Text>

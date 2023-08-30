@@ -6,7 +6,6 @@ const cardWidth = width * 0.9;
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 const cardWidthM = (width - 150) / 2;
-
 //Estilos para el Login
 export const styles = StyleSheet.create({
   container: {
@@ -152,7 +151,7 @@ export const styleshome = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     marginRight: 10,
-    height: 275,
+    height: 320,
   },
   cardConte: {
     width: 200,
@@ -220,7 +219,6 @@ export const styleshome = StyleSheet.create({
   category: {
     fontSize: 14,
     color: 'gray',
-    marginBottom: 10,
   },
   button: {
     backgroundColor: '#46741e',
@@ -1194,7 +1192,7 @@ export const stylesCrearU = StyleSheet.create({
   fieldTitle: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: 'black',
+      color: '#s46741e',
       marginBottom: 2,
       marginTop: 4,
   },
@@ -1283,14 +1281,12 @@ export const stylesEditCrr = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 20,
-    width: '90%',
-  },
+},
+modalContent: {
+    flex: 1,
+    width: '100%',
+    padding: 20, // o el padding que prefieras
+},
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -1317,7 +1313,15 @@ export const stylesEditCrr = StyleSheet.create({
     marginTop: 20,
   },
   modalButton: {
+    flexDirection: 'row',
     backgroundColor: '#46741e',
+    borderRadius: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginHorizontal: 10,
+  },
+  modalButtonCancel: {
+    backgroundColor: 'Red',
     borderRadius: 4,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -1375,6 +1379,21 @@ export const stylesEditCrr = StyleSheet.create({
     margin: 15,
     color: '#46741e',
   },
+  headerContainer: {
+    paddingTop: 15, // Espacio superior
+    paddingBottom: 15, // Espacio inferior
+    flexDirection: 'row', // Organizar contenido en fila
+    alignItems: 'center', // Centrar verticalmente
+    justifyContent: 'center', // Centrar horizontalmente
+    backgroundColor: 'transparent', // Fondo transparente
+},
+headerTitle: {
+    color: '#46741e', // Color principal
+    fontSize: 30, // Tamaño de letra
+    fontWeight: 'bold', // Letra en negrita
+    flex: 1, // Ocupar todo el espacio horizontal disponible
+    textAlign: 'center', // Centrar el texto
+},
 });
 export const stylesEDitF = StyleSheet.create({
   modalContainer: {
@@ -1492,6 +1511,13 @@ export const stylesGestionCn = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f5f6fa',
+  },
+  modalButtonCancel: {
+    backgroundColor: 'red',
+    borderRadius: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginHorizontal: 10,
   },
   header: {
     fontSize: 24,
@@ -1627,7 +1653,7 @@ export const stylesGestionCn = StyleSheet.create({
 export const stylesGestionUser = StyleSheet.create({
   container: {
     paddingTop: 10, // Ajustar el espacio superior para separar las tarjetas del título
-    paddingBottom: 20, // Ajustar el espacio inferior para separar las tarjetas del borde inferior
+    paddingBottom: 50, // Ajustar el espacio inferior para separar las tarjetas del borde inferior
   },
   card: {
     backgroundColor: '#fff',

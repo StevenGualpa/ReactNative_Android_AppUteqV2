@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert, ScrollView, Dimensions } from 'react-native';
 import axios from 'axios';
 import {stylesEditCrr} from './Styles/Styles'
+import Icon from 'react-native-vector-icons/FontAwesome';
 const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
   const [editNombre, setEditNombre] = useState(carrera ? carrera.nombre : '');
   const [editDescripcion, setEditDescripcion] = useState(carrera ? carrera.descripcion : '');
@@ -84,10 +85,14 @@ const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
     }
   
     // Validar URL del sitio web
-    if (!editUrlSitioWeb.startsWith('https://www.uteq.edu.ec')) {
+    const isUteqURLValid = (url) => {
+      const uteqRegex = /^(https?:\/\/)?(www\.)?uteq\.edu\.ec(\/.*)?$/;
+      return uteqRegex.test(url);
+    };
+    if (!isUteqURLValid(editUrlSitioWeb)) {
       Alert.alert('Error', 'La URL del sitio web debe comenzar con https://www.uteq.edu.ec');
       return;
-    }
+  }
   
     // Validar la URL de la imagen
     const isValidImageURL = await isImageURL(editUrlImagen);
@@ -125,56 +130,77 @@ const EditarCarreraModal = ({ visible, carrera, onClose, onEdit }) => {
   const modalContentWidth = windowWidth > 400 ? '80%' : '90%';
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={stylesEditCrr.modalContainer}>
-        <View style={stylesEditCrr.modalContent}>
-          <Text style={stylesEditCrr.modalTitle}>Editar Carrera</Text>
-          <Text style={stylesEditCrr.modalLabel}>Nombre:</Text>
-          <TextInput
-            style={stylesEditCrr.modalInput}
-            value={editNombre}
-            onChangeText={setEditNombre}
-            placeholder="Nombre de la carrera"
-          />
-          <Text style={stylesEditCrr.modalLabel}>Descripción:</Text>
-          <TextInput
-            style={stylesEditCrr.modalInput}
-            value={editDescripcion}
-            onChangeText={setEditDescripcion}
-            multiline
-            placeholder="Descripción de la carrera"
-          />
-          <Text style={stylesEditCrr.modalLabel}>URL de la imagen:</Text>
-          <TextInput
-            style={stylesEditCrr.modalInput}
-            value={editUrlImagen}
-            onChangeText={setEditUrlImagen}
-            placeholder="Ingrese la URL de la imagen"
-          />
-          <Text style={stylesEditCrr.modalLabel}>URL del sitio web:</Text>
-          <TextInput
-            style={stylesEditCrr.modalInput}
-            value={editUrlSitioWeb}
-            onChangeText={setEditUrlSitioWeb}
-            placeholder="Ingrese la URL del sitio web"
-          />
-          <Text style={stylesEditCrr.modalLabel}>Facultad:</Text>
-          <TouchableOpacity style={stylesEditCrr.facultadSelector} onPress={() => setDropdownVisible(true)}>
-            <Text style={stylesEditCrr.facultadText}>{selectedFacultad ? getFacultadName(selectedFacultad) : 'Selecciona una facultad'}</Text>
-          </TouchableOpacity>
-          {renderDropdown()}
-          <View style={stylesEditCrr.modalButtonContainer}>
-            <TouchableOpacity style={stylesEditCrr.modalButton} onPress={handleSave}>
-              <Text style={stylesEditCrr.modalButtonText}>Guardar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={stylesEditCrr.modalButton} onPress={onClose}>
-              <Text style={stylesEditCrr.modalButtonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
+    <Modal visible={visible} animationType="slide" transparent={false}>
+        <View style={{ ...stylesEditCrr.modalContainer, flex: 1 }}>
+            {/* Header */}
+            <View style={stylesEditCrr.headerContainer}>
+            <Text style={stylesEditCrr.headerTitle}>Editar Carrera</Text>
+            </View>
+
+
+            {/* Content */}
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                <View style={{ ...stylesEditCrr.modalContent, flex: 1 }}>
+                    <Text style={stylesEditCrr.modalLabel}>Nombre:</Text>
+                    <TextInput
+                        style={stylesEditCrr.modalInput}
+                        value={editNombre}
+                        onChangeText={setEditNombre}
+                        placeholder="Nombre de la carrera"
+                    />
+
+                    <Text style={stylesEditCrr.modalLabel}>Descripción:</Text>
+                    <TextInput
+                        style={stylesEditCrr.modalInput}
+                        value={editDescripcion}
+                        onChangeText={setEditDescripcion}
+                        multiline
+                        numberOfLines={15}  // Limitar a 15 líneas
+                        placeholder="Descripción de la carrera"
+                    />
+
+                    <Text style={stylesEditCrr.modalLabel}>URL de la imagen:</Text>
+                    <TextInput
+                        style={stylesEditCrr.modalInput}
+                        value={editUrlImagen}
+                        onChangeText={setEditUrlImagen}
+                        placeholder="Ingrese la URL de la imagen"
+                    />
+
+                    <Text style={stylesEditCrr.modalLabel}>URL del sitio web:</Text>
+                    <TextInput
+                        style={stylesEditCrr.modalInput}
+                        value={editUrlSitioWeb}
+                        onChangeText={setEditUrlSitioWeb}
+                        placeholder="Ingrese la URL del sitio web"
+                    />
+
+                    <Text style={stylesEditCrr.modalLabel}>Facultad:</Text>
+                    <TouchableOpacity style={stylesEditCrr.facultadSelector} onPress={() => setDropdownVisible(true)}>
+                        <Text style={stylesEditCrr.facultadText}>
+                            {selectedFacultad ? getFacultadName(selectedFacultad) : 'Selecciona una facultad'}
+                        </Text>
+                    </TouchableOpacity>
+                    {renderDropdown()}
+
+                    <View style={stylesEditCrr.modalButtonContainer}>
+                <TouchableOpacity style={stylesEditCrr.modalButton} onPress={handleSave}>
+                    <Icon name="save" size={20} color="white" style={{ marginRight: 5 }} />
+                    <Text style={stylesEditCrr.modalButtonText}>Guardar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ ...stylesEditCrr.modalButton, backgroundColor: 'red' }} onPress={onClose}>
+                    <Icon name="close" size={20} color="white" style={{ marginRight: 5 }} />
+                    <Text style={stylesEditCrr.modalButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+            </View>
+                </View>
+            </ScrollView>
         </View>
-      </View>
     </Modal>
-  );
+);
+
+
+
 };
 
 

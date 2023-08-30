@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+
   Image,
   Linking,
   Modal,
@@ -57,7 +58,6 @@ export const FacuDetails = ({ facultad, onGoBack }) => {
       setLoading(false);
     }
   };
-
   const sendEmail = () => {
     const emailAddress = facultad.correo;
     const subject = 'Consulta sobre la facultad';

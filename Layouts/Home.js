@@ -6,8 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import 'moment/locale/es'; 
 import { BackHandler,Alert  } from 'react-native';
-import { styleshome } from './Styles/Styles'; // Ajusta la ruta si es necesario
-
+import { styleshome } from './Styles/Styles';
 
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
@@ -20,7 +19,7 @@ const Home = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log('Usuario desde el contexto:', user); // Registro de depuración
+    //console.log('Usuario desde el contexto:', user); // Registro de depuración
     if (user) {
       Alert.alert("Usuario Ingresado", `Bienvenido ${user.nombre}`);
     } else {
@@ -35,6 +34,7 @@ const Home = () => {
   const [magazineData, setMagazineData] = useState([]);
   const [noticeData, setnoticeData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userPreferences, setUserPreferences] = useState([]);
 
  const blockBackButton = () => {
     Alert.alert(
@@ -47,6 +47,7 @@ const Home = () => {
     );
     return true; // Indica que el botón de retroceso está bloqueado
   };
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -75,6 +76,7 @@ const Home = () => {
       setLoading(false);
     }
   };
+  
  // Función para manejar el evento de "pull to refresh" en la lista de contenidos
   const onRefresh = async () => {
     setRefreshing(true);
@@ -114,21 +116,46 @@ const Home = () => {
     fetchMagazineData();
   }, []);
 
+//preferencias de usuario
+
+const fetchUserPreferences = async () => {
+  try {
+    if (user && user.ID) {
+      const response = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/preferencias/getAll/${user.ID}`);
+      if (response.data && response.data.preferencias) {
+        setUserPreferences(response.data.preferencias); // Suponiendo que las preferencias vienen en el campo "preferencias" del response
+      }
+    }
+  } catch (error) {
+    console.error('Error al obtener las preferencias del usuario:', error);
+  }
+};
+
+
+
+useEffect(() => {
+  fetchUserPreferences();
+}, [user]);
 
   // Función para obtener los datos de las noticias desde la API
   const fetchnoticeData = async () => {
     try {
-      const response = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Noticias'); // La ruta de tu API
-      setnoticeData(response.data);
+      let userPreferences = await fetchUserPreferences();
+      const response = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/GetAll');
+      if (userPreferences && userPreferences.length > 0) {
+        const filteredData = response.data.noticias.filter((noticia) => userPreferences.includes(noticia.categoria));
+        setnoticeData(filteredData);
+      } else {
+        setnoticeData(response.data.noticias);
+      }
     } catch (error) {
       console.error('Error al obtener los contenidos de la API:', error);
     }
   };
+
   useEffect(() => {
     fetchnoticeData();
   }, []);
-
- 
   
   // Función para manejar la acción de presionar una sección
   const handleSectionPress = async (section) => {
@@ -173,28 +200,34 @@ const Home = () => {
 
   // Función para renderizar las tarjetas de noticias
   const renderNewsCards = () => {
-    const visibleNews = noticeData.slice(0, 5);
+    const visibleNews = noticeData.slice(0, 10);
     return (
       <ScrollView horizontal>
-        {visibleNews.map((content) => (
-          <View key={content.id || content.Titulo} style={styleshome.cardNoti}>
-            <View style={styleshome.logoContainer}>
-              <Image source={{ uri: content.Portada }} style={styleshome.logo} />
-            </View>
-            <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
-            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Noticias', content.Titulo)}>
-              <View style={styleshome.buttonContent}>
-                <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
-                <Text style={styleshome.buttonText}> Leer más</Text>
+        {visibleNews.map((content) => {
+          console.log(content); // Agrega esta línea para imprimir los datos de la noticia en la consola
+          return (
+            <View key={content.id || content.titulo} style={styleshome.cardNoti}>
+              <View style={styleshome.logoContainer}>
+                <Image source={{ uri: content.portada }} style={styleshome.logo} />
               </View>
-            </TouchableOpacity>
-          </View>
-        ))}
+              <Text style={styleshome.title} numberOfLines={2}>{content.titulo}</Text>
+              <Text style={styleshome.category} numberOfLines={1}>{content.categoria}</Text>
+              <Text style={styleshome.category}>{moment(content.CreatedAt).format('LL')}</Text>
+              <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Noticias', content.titulo)}>
+                <View style={styleshome.buttonContent}>
+                  <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
+                  <Text style={styleshome.buttonText}> Leer más</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
       </ScrollView>
     );
   };
   
-  // Función para renderizar las tarjetas de noticias
+  
+  // Función para renderizar las tarjetas de revistas
   const renderMagazineCards = () => {
     const visibleMagazines = magazineData.slice(0, 5);
     return (
@@ -205,7 +238,7 @@ const Home = () => {
               <Image source={{ uri: content.Portada }} style={styleshome.logoRevis} />
             </View>
             <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
-            <Text style={styleshome.category}>{content.date}</Text>
+            <Text style={styleshome.category}>{moment(content.date).format('LL')}</Text>
             <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Revistas', content.Titulo)}>
               <View style={styleshome.buttonContent}>
                 <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />

@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, Linking, Dimensions } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, Linking } from 'react-native';
 import axios from 'axios';
-import { stylesVisNotices } from './Styles/Styles'; // Ajusta la ruta si es necesario
+import { stylesVisNotices } from './Styles/Styles';
+import { AuthContext } from './AuthContext';
 
-
-const NewsCard = ({ image, title, category, url }) => {
+const NewsCard = ({ image, title, date, url, category, onButtonPress }) => {
   const handleReadMore = () => {
+    if (onButtonPress) {
+      onButtonPress();
+    }
     Linking.openURL(url);
   };
 
   return (
     <View style={stylesVisNotices.card}>
       <Image source={{ uri: image }} style={stylesVisNotices.image} />
-      <Text style={stylesVisNotices.title}>{title}</Text>
-      <Text style={stylesVisNotices.category}>{category}</Text>
+      <Text style={stylesVisNotices.title}>{String(title)}</Text>
+      <Text style={stylesVisNotices.category}>{String(category)}</Text>
+      <Text style={stylesVisNotices.date}>{formatDate(date)}</Text>
       <TouchableOpacity style={stylesVisNotices.button} onPress={handleReadMore}>
         <View style={stylesVisNotices.buttonContent}>
           <Text style={stylesVisNotices.buttonText}>Ver más</Text>
@@ -23,28 +27,64 @@ const NewsCard = ({ image, title, category, url }) => {
   );
 };
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+  return formattedDate;
+};
+
 const ViewNoticias = () => {
   const [noticias, setNoticias] = useState([]);
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Noticias')
+  const registerView = async (nombre) => {
+    try {
+      console.log("Registrando vista de noticia:", { seccion: "Noticia", nombre: nombre });
+      await axios.post('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/estadisticas/insert', {
+        seccion: "Noticia",
+        nombre: nombre
+      });
+    } catch (error) {
+      console.error("Error registering view: ", error);
+    }
+  };
+
+  const fetchData = () => {
+    axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/byUsuario/${user.ID}`)
       .then((response) => {
-        setNoticias(response.data); // La respuesta ya es un arreglo
+        if (response.data && response.data.noticias && response.data.noticias.length > 0) {
+          setNoticias(response.data.noticias);
+        } else {
+          return axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/GetAll');
+        }
+      })
+      .then((response) => {
+        if (response && response.data && response.data.noticias) {
+          setNoticias(response.data.noticias);
+        }
       })
       .catch((error) => console.error(error));
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 6000);  // Refrescar cada 6 segundos
+    return () => clearInterval(interval);  // Limpia el intervalo cuando el componente se desmonte
+  }, [user.ID]);
 
   return (
     <View style={stylesVisNotices.container}>
       <Text style={stylesVisNotices.header}>Vista de Noticias</Text>
       <ScrollView>
-        {noticias.map((noticia) => (
+        {noticias.map((noticia, index) => (
           <NewsCard
-            key={noticia.Titulo} // Usar el título como clave
-            image={noticia.Portada}
-            title={noticia.Titulo}
-            category={noticia.date} // O cualquier otra propiedad que desees mostrar
+            key={index}
+            image={noticia.portada}
+            title={noticia.titulo}
+            date={noticia.CreatedAt}
             url={noticia.url}
+            category={noticia.categoria}
+            onButtonPress={() => registerView(noticia.titulo)}
           />
         ))}
       </ScrollView>

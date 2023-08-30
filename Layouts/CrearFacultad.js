@@ -88,11 +88,13 @@ const FacuCreate = () => {
       });
   };
 
-  //falta agregar los dominios permitidos
   const isEmailValid = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const uteqEmailRegex = /^[^\s@]+@uteq\.edu\.ec$/; // Nueva expresión regular para el dominio @uteq.edu.ec
+    
+    return emailRegex.test(email) && uteqEmailRegex.test(email);
   };
+  
 
   const isCoordinateValid = (coordinate) => {
     const coordinateRegex = /^-?(\d+(\.\d*)?|\.\d+)(,\s*-?(\d+(\.\d*)?|\.\d+))*$/;
@@ -114,7 +116,7 @@ const FacuCreate = () => {
   };
 
   const isUteqURLValid = (url) => {
-    const uteqRegex = /^https:\/\/www\.uteq\.edu\.ec(\/.*)?$/;
+    const uteqRegex = /^(https?:\/\/)?(www\.)?uteq\.edu\.ec(\/.*)?$/;
     return uteqRegex.test(url);
   };
 
