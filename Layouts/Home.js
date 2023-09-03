@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, RefreshControl, Animated,ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, Linking, RefreshControl, Animated, ActivityIndicator, Alert, BackHandler } from 'react-native';
 import axios from 'axios';
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
-import 'moment/locale/es'; 
-import { BackHandler,Alert  } from 'react-native';
+import 'moment/locale/es';
 import { styleshome } from './Styles/Styles';
-
 import { useContext } from 'react';
 import { AuthContext } from './AuthContext';
+import RNFetchBlob from 'rn-fetch-blob';
 
 moment.locale('es');
 const Home = () => {
@@ -17,6 +16,9 @@ const Home = () => {
 
   //Verificamos si jalamos el id
   const { user } = useContext(AuthContext);
+
+  const [accessToken, setAccessToken] = useState(null);
+  const [revistas, setRevistas] = useState([]);
 
   useEffect(() => {
     //console.log('Usuario desde el contexto:', user); // Registro de depuración
@@ -102,19 +104,51 @@ const Home = () => {
       });
   };
   
-  // Función para obtener los datos de las revistas desde la API
-  const fetchMagazineData = async () => {
-    try {
-      const response = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Revistas'); // La ruta de tu API
-      setMagazineData(response.data);
-    } catch (error) {
-      console.error('Error al obtener los contenidos de la API:', error);
-    }
+  
+  
+  const authenticate = () => {
+    RNFetchBlob.config({
+      trusty: true
+    }).fetch('POST', 'https://apiws.uteq.edu.ec/h6RPoSoRaah0Y4Bah28eew/api/auth/signin', {
+      'Content-Type': 'application/json',
+    }, JSON.stringify({
+      username: '_x1userdev',
+      password: 'LineGold179#5ft2'
+    }))
+    .then((response) => {
+      const accessToken = JSON.parse(response.data).accessToken;
+      setAccessToken(accessToken);
+    })
+    .catch((error) => {
+      console.error('Error al autenticarse:', error);
+    });
+  };
+
+  const fetchMagazineData = () => {
+    if (!accessToken) return;
+
+    RNFetchBlob.config({
+      trusty: true
+    }).fetch('GET', 'https://apiws.uteq.edu.ec/h6RPoSoRaah0Y4Bah28eew/functions/information/entity/6', {
+      'Authorization': `Bearer ${accessToken}`
+    })
+    .then((response) => {
+      setRevistas(JSON.parse(response.data));
+    })
+    .catch((error) => {
+      console.error('Error al obtener las revistas:', error);
+    });
   };
 
   useEffect(() => {
-    fetchMagazineData();
+    authenticate();
   }, []);
+
+  useEffect(() => {
+    fetchMagazineData();
+  }, [accessToken]);
+
+
 
 //preferencias de usuario
 
@@ -229,17 +263,16 @@ useEffect(() => {
   
   // Función para renderizar las tarjetas de revistas
   const renderMagazineCards = () => {
-    const visibleMagazines = magazineData.slice(0, 5);
     return (
       <ScrollView horizontal>
-        {visibleMagazines.map((content) => (
-          <View key={content.id || content.Titulo} style={styleshome.cardRevis}>
+        {revistas.map((revista) => (
+          <View key={revista.anio + '-' + revista.mes} style={styleshome.cardRevis}>
             <View style={styleshome.logoContainer}>
-              <Image source={{ uri: content.Portada }} style={styleshome.logoRevis} />
+              <Image source={{ uri: `https://uteq.edu.ec/assets/images/newspapers/${revista.urlportada}` }} style={styleshome.logoRevis} />
             </View>
-            <Text style={styleshome.title} numberOfLines={2}>{content.Titulo}</Text>
-            <Text style={styleshome.category}>{moment(content.date).format('LL')}</Text>
-            <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Revistas', content.Titulo)}>
+            <Text style={styleshome.title} numberOfLines={2}>{`Edición ${moment().month(revista.mes - 1).format('MMMM')} ${revista.anio}`}</Text>
+            <Text style={styleshome.category}>{moment(new Date(revista.anio, revista.mes - 1)).format('LL')}</Text>
+            <TouchableOpacity style={styleshome.button} onPress={() => Linking.openURL(revista.urlpw)}>
               <View style={styleshome.buttonContent}>
                 <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
                 <Text style={styleshome.buttonText}> Leer más</Text>
@@ -249,7 +282,7 @@ useEffect(() => {
         ))}
       </ScrollView>
     );
-  };  
+  }; 
   // Función para renderizar las tarjetas de contenido
   const renderContentCards = () => {
     const visibleContent = contentData.slice(0, 5);
@@ -283,34 +316,34 @@ useEffect(() => {
   
   return (
     <View style={styleshome.container}>
-    <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-      {/* Secciones del contenido */}
-      <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Noticias')}>
-        <Icon name="newspaper-o" size={28} color="#46741e" />
-        <Text style={styleshome.sectionTitle}>Noticias</Text>
-      </TouchableOpacity>
-      {renderNewsCards()}
+      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        {/* Secciones del contenido */}
+        <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Noticias')}>
+          <Icon name="newspaper-o" size={28} color="#46741e" />
+          <Text style={styleshome.sectionTitle}>Noticias</Text>
+        </TouchableOpacity>
+        {renderNewsCards()}
 
-      <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Revistas')}>
-        <Icon name="book" size={28} color="#46741e" />
-        <Text style={styleshome.sectionTitle}>Revistas</Text>
-      </TouchableOpacity>
-      {renderMagazineCards()}
+        <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Revistas')}>
+          <Icon name="book" size={28} color="#46741e" />
+          <Text style={styleshome.sectionTitle}>Revistas</Text>
+        </TouchableOpacity>
+        {renderMagazineCards()}
 
-      <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Contenido')}>
-        <Icon name="film" size={28} color="#46741e" />
-        <Text style={styleshome.sectionTitle}>Contenido</Text>
-      </TouchableOpacity>
-      {renderContentCards()}
-    </ScrollView>
+        <TouchableOpacity style={styleshome.sectionHeader} onPress={() => handleSectionPress('Contenido')}>
+          <Icon name="film" size={28} color="#46741e" />
+          <Text style={styleshome.sectionTitle}>Contenido</Text>
+        </TouchableOpacity>
+        {renderContentCards()}
+      </ScrollView>
 
-    {/* Botón flotante */}
-    <Animated.View style={styleshome.floatingButton}>
-      <TouchableOpacity style={styleshome.floatingButtonTouchable} onPress={handleFloatingButtonPress}>
-        <Icon name="comments" size={24} color="#ffffff" />
-      </TouchableOpacity>
-    </Animated.View>
-  </View>
+      {/* Botón flotante */}
+      <Animated.View style={styleshome.floatingButton}>
+        <TouchableOpacity style={styleshome.floatingButtonTouchable} onPress={handleFloatingButtonPress}>
+          <Icon name="comments" size={24} color="#ffffff" />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 };
 
