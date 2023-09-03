@@ -27,6 +27,7 @@ import GestionCarreras from "./GestionCarreras";
 import ViewsApp from "./Estadisticas";
 import axios from 'axios';
 import RadiacionScreen from "./Radiacion";
+import ViewNoticias1 from "./VisualizarNoticias1";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,7 +66,7 @@ function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-      <Stack.Screen name="Noticias" component={ViewNoticias} options={{ headerShown: false }} />
+      <Stack.Screen name="Noticias" component={ViewNoticias1} options={{ headerShown: false }} />
       <Stack.Screen name="Revistas" component={ViewRevista} options={{ headerShown: false }} />
       <Stack.Screen name="Contenido" component={ContentCard} options={{ headerShown: false }} />
       <stack2.Screen name="ChatBoxito" component={ChatScreen} options={{ headerShown: false }} />
