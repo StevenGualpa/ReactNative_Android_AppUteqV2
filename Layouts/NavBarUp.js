@@ -5,7 +5,8 @@ import axios from 'axios';
 import FacuDetails from './Mostrarfacultad';
 import NotificationModal from './Notificacion';
 const { width, height } = Dimensions.get('window');
-
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
 const Dropdown = ({ title, options, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,9 +38,8 @@ const Dropdown = ({ title, options, onSelect }) => {
     </View>
   );
 };
-
 const NavigationBar = () => {
-
+  const { user } = useContext(AuthContext);
   const [searchText, setSearchText] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -75,40 +75,70 @@ const NavigationBar = () => {
   const handlelinkview = (link) => {
     Linking.openURL(link);
   };
-  const handleSearch = async () => {
-    if (!searchText.trim()) {
-      return;
-    }
 
-    console.log('Buscar:', searchText);
+ const handleSearch = async () => {
+  if (!searchText.trim()) {
+    return;
+  }
 
-    // Cerrar cualquier modal abierto antes de abrir el modal de búsqueda de resultados
-    setIsModalOpen(false);
+  console.log('Buscar:', searchText);
 
+  setIsModalOpen(false);
+
+  try {
+    const revistasResponse = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Revistas');
+    const revistasResults = revistasResponse.data.filter(item =>
+      item.Titulo && item.Titulo.toLowerCase().includes(searchText.toLowerCase())
+    ).map(item => ({
+      titulo: item.Titulo,
+      imagen: item.Portada,
+      url: item.url,
+      tipo: 'Revista',
+    }));
+
+    let noticiasResults = [];
     try {
-      // Realizar la búsqueda en el endpoint de revistas
-      const revistasResponse = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Revistas');
-      const revistasResults = revistasResponse.data.filter(item =>
-        item.Titulo && item.Titulo.toLowerCase().includes(searchText.toLowerCase()) // Verificar que "Titulo" existe antes de acceder a él
-      );
-
-      // Realizar la búsqueda en el endpoint de noticias
-      const noticiasResponse = await axios.get('https://my-json-server.typicode.com/StevenGualpa/Api_Historial/Noticias');
-      const noticiasResults = noticiasResponse.data.filter(item =>
-        item.Titulo && item.Titulo.toLowerCase().includes(searchText.toLowerCase()) // Verificar que "title" existe antes de acceder a él
-      );
-
-      // Combinar los resultados de ambas búsquedas
-      const combinedResults = [...revistasResults, ...noticiasResults];
-
-      setSearchResults(combinedResults);
-      setIsSearchModalOpen(true);
-      setIsModalOpen(true); // Abrir el modal de búsqueda de resultados
-
-    } catch (error) {
-      console.error('Error al realizar la búsqueda:', error);
+      const noticiasByUsuarioResponse = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/byUsuario/${user.ID}`);
+      noticiasResults = noticiasByUsuarioResponse.data.noticias.filter(item =>
+        item.titulo && item.titulo.toLowerCase().includes(searchText.toLowerCase())
+      ).map(item => ({
+        titulo: item.titulo,
+        imagen: item.portada,
+        url: item.url,
+        tipo: 'Noticia',
+      }));
+    } catch (userError) {
+      const noticiasResponse = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/GetAll');
+      noticiasResults = noticiasResponse.data.noticias.filter(item =>
+        item.titulo && item.titulo.toLowerCase().includes(searchText.toLowerCase())
+      ).map(item => ({
+        titulo: item.titulo,
+        imagen: item.portada,
+        url: item.url,
+        tipo: 'Noticia',
+      }));
     }
-  };
+
+    const multimediaResponse = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/multimedia/getAll');
+    const multimediaResults = multimediaResponse.data.multimedias.filter(item =>
+      item.titulo && item.titulo.toLowerCase().includes(searchText.toLowerCase())
+    ).map(item => ({
+      titulo: item.titulo,
+      imagen: item.url_imageb,
+      url: item.url_video,
+      tipo: 'Multimedia',
+    }));
+
+    const combinedResults = [...revistasResults, ...noticiasResults, ...multimediaResults];
+
+    setSearchResults(combinedResults);
+    setIsSearchModalOpen(true);
+    setIsModalOpen(true);
+
+  } catch (error) {
+    console.error('Error al realizar la búsqueda:', error);
+  }
+};
 
   const handleNotificationModal = () => {
     setIsNotificationModalOpen(!isNotificationModalOpen);
@@ -214,9 +244,9 @@ const NavigationBar = () => {
               }}
             >
               <View style={styles.logoContainer}>
-                <Image source={{ uri: result.Portada }} style={styles.logo} />
+                <Image source={{ uri: result.imagen || result.url_imageb }} style={styles.logo} />
               </View>
-              <Text style={styles.searchResultItem}>{result.Titulo}</Text>
+              <Text style={styles.searchResultItem}>{result.titulo}</Text>
             </TouchableOpacity>
           ))}
           <TouchableOpacity onPress={handleCloseSearchModal} style={styles.closeSearchModalButton}>
@@ -292,8 +322,6 @@ const NavigationBar = () => {
           </TouchableOpacity>
         </View>
         {/*       PROGRAMAR ESTA PARTE   0
-        
-        
          */}
         {/*
         <TouchableOpacity

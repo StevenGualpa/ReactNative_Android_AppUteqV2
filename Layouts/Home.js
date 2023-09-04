@@ -37,6 +37,7 @@ const Home = () => {
   const [noticeData, setnoticeData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userPreferences, setUserPreferences] = useState([]);
+  const [news, setNews] = useState([]);
 
  const blockBackButton = () => {
     Alert.alert(
@@ -150,47 +151,49 @@ const Home = () => {
 
 
 
-//preferencias de usuario
-
-const fetchUserPreferences = async () => {
-  try {
-    if (user && user.ID) {
-      const response = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/preferencias/getAll/${user.ID}`);
-      if (response.data && response.data.preferencias) {
-        setUserPreferences(response.data.preferencias); // Suponiendo que las preferencias vienen en el campo "preferencias" del response
-      }
-    }
-  } catch (error) {
-    console.error('Error al obtener las preferencias del usuario:', error);
-  }
-};
-
-
-
-useEffect(() => {
-  fetchUserPreferences();
-}, [user]);
-
-  // Función para obtener los datos de las noticias desde la API
   const fetchnoticeData = async () => {
     try {
-      let userPreferences = await fetchUserPreferences();
-      const response = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/GetAll');
-      if (userPreferences && userPreferences.length > 0) {
-        const filteredData = response.data.noticias.filter((noticia) => userPreferences.includes(noticia.categoria));
-        setnoticeData(filteredData);
-      } else {
-        setnoticeData(response.data.noticias);
-      }
+        let newsData;
+    
+        try {
+            // Intentar obtener noticias basadas en las preferencias del usuario
+            const noticiasByUsuarioResponse = await axios.get(`https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/byUsuario/${user.ID}`);
+            newsData = noticiasByUsuarioResponse.data.noticias;
+        } catch (userError) {
+            // Si el usuario no tiene preferencias o no existe, obtener todas las noticias
+            const noticiasResponse = await axios.get('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/noticias/GetAll');
+            newsData = noticiasResponse.data.noticias;
+        }
+    
+        // Antes de establecer las noticias, verificar si son válidas
+        if (newsData && Array.isArray(newsData)) {
+            setNews(newsData);
+        } else {
+            setNews([]);  // Establece el estado a un array vacío o maneja el error de manera adecuada.
+        }
+    
     } catch (error) {
-      console.error('Error al obtener los contenidos de la API:', error);
+        console.error('Error al cargar las noticias:', error);
+        // Puedes manejar el error aquí, quizás mostrando un mensaje al usuario
     }
-  };
+};
 
+//AQUI ESTA ESTABLECIDO QUE CADA 5 SEGUNDOS SE REALICE LA SOLICITUD
+  
   useEffect(() => {
-    fetchnoticeData();
+    fetchnoticeData(); // Llama a la función inicialmente para que no tengas que esperar 5 segundos para la primera carga
+  
+    const intervalId = setInterval(() => {
+      fetchnoticeData();
+    }, 5000); // Establece un intervalo para llamar a la función cada 5 segundos
+  
+    return () => {
+      clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta para evitar errores o comportamientos inesperados
+    };
+  
   }, []);
   
+ 
   // Función para manejar la acción de presionar una sección
   const handleSectionPress = async (section) => {
     try {
@@ -234,31 +237,44 @@ useEffect(() => {
 
   // Función para renderizar las tarjetas de noticias
   const renderNewsCards = () => {
-    const visibleNews = noticeData.slice(0, 10);
-    return (
-      <ScrollView horizontal>
-        {visibleNews.map((content) => {
-          console.log(content); // Agrega esta línea para imprimir los datos de la noticia en la consola
-          return (
-            <View key={content.id || content.titulo} style={styleshome.cardNoti}>
-              <View style={styleshome.logoContainer}>
-                <Image source={{ uri: content.portada }} style={styleshome.logo} />
-              </View>
-              <Text style={styleshome.title} numberOfLines={2}>{content.titulo}</Text>
-              <Text style={styleshome.category} numberOfLines={1}>{content.categoria}</Text>
-              <Text style={styleshome.category}>{moment(content.CreatedAt).format('LL')}</Text>
-              <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Noticias', content.titulo)}>
-                <View style={styleshome.buttonContent}>
-                  <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
-                  <Text style={styleshome.buttonText}> Leer más</Text>
-                </View>
-              </TouchableOpacity>
+    // Comprueba si el array 'news' existe y tiene contenido antes de intentar utilizar 'slice'
+    const hasNews = news && Array.isArray(news) && news.length > 0;
+
+    // Si no hay noticias, devuelve un mensaje indicándolo
+    if (!hasNews) {
+        return (
+            <View style={{ alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+                <Text style={{ fontSize: 18, color: 'grey' }}>No hay noticias disponibles.</Text>
             </View>
-          );
-        })}
-      </ScrollView>
+        );
+    }
+
+    const visibleNews = news.slice(0, 10);
+    return (
+        <ScrollView horizontal>
+            {visibleNews.map((content) => {
+                return (
+                    <View key={content.id || content.titulo} style={styleshome.cardNoti}>
+                        <View style={styleshome.logoContainer}>
+                            <Image source={{ uri: content.portada }} style={styleshome.logo} />
+                        </View>
+                        <Text style={styleshome.title} numberOfLines={2}>{content.titulo}</Text>
+                        <Text style={styleshome.category} numberOfLines={1}>{content.categoria}</Text>
+                        <Text style={styleshome.category}>{moment(content.CreatedAt).format('LL')}</Text>
+                        <TouchableOpacity style={styleshome.button} onPress={() => handleButtonPress(content.url, 'Noticias', content.titulo)}>
+                            <View style={styleshome.buttonContent}>
+                                <Icon name="arrow-right" size={16} color="white" style={styleshome.buttonIcon} />
+                                <Text style={styleshome.buttonText}> Leer más</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                );
+            })}
+        </ScrollView>
     );
-  };
+};
+
+
   
   
   // Función para renderizar las tarjetas de revistas
