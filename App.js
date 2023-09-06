@@ -4,6 +4,8 @@ import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 
 import { AuthProvider } from './Layouts/AuthContext';
+import { GoogleSignin } from '@react-native-community/google-signin';
+
 
 export default function App() {
   const [deviceToken, setDeviceToken] = useState('');
@@ -28,6 +30,15 @@ export default function App() {
   useEffect(() => {
     messaging().getToken().then(setDeviceToken);
   }, []);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '798041694675-4ktjr02iokc9paphm6o3funvb5srsirt.apps.googleusercontent.com', // obtenido de la consola de desarrolladores de Google
+      offlineAccess: true,
+    });
+  }, []);
+    
+
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {

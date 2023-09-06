@@ -12,6 +12,9 @@ import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la
 import { styles } from './Styles/Styles'; // Ajusta la ruta si es necesario
 import { useAuth } from './AuthContext';
 import ChangePasswordModal from './Cambio'
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
+import ViewPropTypes from 'deprecated-react-native-prop-types';
+
 
 
 const LoginScreen = () => {
@@ -31,6 +34,30 @@ const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
 
+
+
+const _signIn = async () => {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    // Puedes usar userInfo para obtener información del usuario y autenticarlo en tu backend si es necesario
+  } catch (error) {
+    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      // El usuario canceló el inicio de sesión
+    } else if (error.code === statusCodes.IN_PROGRESS) {
+      // Operación en progreso
+    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      // Play services no disponibles o desactualizados
+    } else {
+      // Otro error
+    }
+  }
+};
+
+
+
+
+  
   const openChangePasswordModal = () => {
     setChangePasswordModalVisible(true);
   };
@@ -197,6 +224,14 @@ const LoginScreen = () => {
             isVisible={changePasswordModalVisible}
             onClose={closeChangePasswordModal}
           />
+
+<GoogleSigninButton
+  style={{ width: 192, height: 48 }}
+  size={GoogleSigninButton.Size.Wide}
+  color={GoogleSigninButton.Color.Dark}
+  onPress={_signIn} // Asegúrate de que _signIn es una función definida
+/>
+
 
           <TouchableOpacity
             style={styles.loginButton}
