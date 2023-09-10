@@ -32,12 +32,52 @@ const LoginScreen = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-  const googleSignIn = () => {
+  const googleSignIn = async () => {
+    // Genera un código único (en este caso un número aleatorio, pero debería ser algo más seguro)
+    const codigo = Math.random().toString(36).substring(2);
+    
     // Cambia la URL por la URL de tu backend
-    const backendUrl = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com';
-    Linking.openURL(`${backendUrl}/usuarios/google/login`);
-  };
+    const backendUrl = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/google/login';
+    
+    try {
+        // Envía una solicitud POST a tu servidor backend con el "código" en el cuerpo de la solicitud
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ codigo }),
+        });
+
+        if (!response.ok) {
+            // Si la respuesta no es 200 OK, lanza un error
+            throw new Error('Respuesta no exitosa del servidor: ' + response.statusText);
+        }
+
+        // Intenta leer el cuerpo de la respuesta como texto
+        const responseText = await response.text();
+        console.log('Respuesta del servidor (texto):', responseText);
+
+        // Intenta analizar el texto como JSON (esto podría fallar si el texto no es JSON válido)
+        const responseData = JSON.parse(responseText);
+        console.log('Respuesta del servidor (JSON):', responseData);
+
+        if (responseData.error) {
+            console.error('Error del servidor:', responseData.error);
+            return;
+        }
+
+        // Utiliza la URL proporcionada por el backend para iniciar el flujo OAuth en el navegador del sistema
+        if (responseData.url) {
+            Linking.openURL(responseData.url);
+        } else {
+            console.error('Error: No se proporcionó la URL');
+        }
+    } catch (error) {
+        // Si hay un error, captúralo y maneja la situación como sea necesario
+        console.error('Error en el proceso de inicio de sesión:', error);
+    }
+};
   
 
 
@@ -112,22 +152,18 @@ const LoginScreen = () => {
   };
 
 
-  useEffect(() => {
-    Linking.addEventListener('url', handleOpenURL);
-  
-    return () => {
-      Linking.removeEventListener('url', handleOpenURL);
-    };
-  }, []);
+
   
   const handleOpenURL = (event) => {
+     console.log('URL recibida:');
     // Extrae el token o código de la URL
     const [, query_string] = event.url.split('?');
     const queries = Object.fromEntries(new URLSearchParams(query_string));
   
     // Aquí estoy asumiendo que recibes un "code" en la URL, ajusta según lo que recibes
     const code = queries.code;
-  
+    console.log('URL recibida:');
+    console.log('Código extraído de la URL:', code);
     if (code) {
       // Cambia la URL por la URL de tu backend y la ruta a la que debes enviar el código
       fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/google/callback', {
