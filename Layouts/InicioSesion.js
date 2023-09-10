@@ -12,8 +12,7 @@ import VerificationModal from './VerificationModal'; // Asegúrate de ajustar la
 import { styles } from './Styles/Styles'; // Ajusta la ruta si es necesario
 import { useAuth } from './AuthContext';
 import ChangePasswordModal from './Cambio'
-import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-community/google-signin';
-import ViewPropTypes from 'deprecated-react-native-prop-types';
+import { Linking } from 'react-native';
 
 
 
@@ -34,27 +33,12 @@ const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
 
-
-
-const _signIn = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    // Puedes usar userInfo para obtener información del usuario y autenticarlo en tu backend si es necesario
-  } catch (error) {
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      // El usuario canceló el inicio de sesión
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      // Operación en progreso
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      // Play services no disponibles o desactualizados
-    } else {
-      // Otro error
-    }
-  }
-};
-
-
+  const googleSignIn = () => {
+    // Cambia la URL por la URL de tu backend
+    const backendUrl = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com';
+    Linking.openURL(`${backendUrl}/usuarios/google/login`);
+  };
+  
 
 
   
@@ -127,6 +111,44 @@ const _signIn = async () => {
       });
   };
 
+
+  useEffect(() => {
+    Linking.addEventListener('url', handleOpenURL);
+  
+    return () => {
+      Linking.removeEventListener('url', handleOpenURL);
+    };
+  }, []);
+  
+  const handleOpenURL = (event) => {
+    // Extrae el token o código de la URL
+    const [, query_string] = event.url.split('?');
+    const queries = Object.fromEntries(new URLSearchParams(query_string));
+  
+    // Aquí estoy asumiendo que recibes un "code" en la URL, ajusta según lo que recibes
+    const code = queries.code;
+  
+    if (code) {
+      // Cambia la URL por la URL de tu backend y la ruta a la que debes enviar el código
+      fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/google/callback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Data recibida:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    } else {
+      console.error('No se recibió ningún código en la URL');
+    }
+  };
+  
 
   const handleRegisterModal = () => {
     setModalVisible(true);
@@ -225,12 +247,14 @@ const _signIn = async () => {
             onClose={closeChangePasswordModal}
           />
 
-<GoogleSigninButton
-  style={{ width: 192, height: 48 }}
-  size={GoogleSigninButton.Size.Wide}
-  color={GoogleSigninButton.Color.Dark}
-  onPress={_signIn} // Asegúrate de que _signIn es una función definida
-/>
+<TouchableOpacity
+  style={styles.loginButton}
+  onPress={googleSignIn}
+  activeOpacity={0.7}
+>
+  <Text style={styles.loginButtonText}>Iniciar sesión con Google</Text>
+</TouchableOpacity>
+
 
 
           <TouchableOpacity

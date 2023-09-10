@@ -34,7 +34,8 @@ export default function App() {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: '798041694675-4ktjr02iokc9paphm6o3funvb5srsirt.apps.googleusercontent.com', // obtenido de la consola de desarrolladores de Google
-      offlineAccess: true,
+      androidClientId: '371719052873-ke1ka3rfi24beop16smpe2vmqerthpuo.apps.googleusercontent.com',
+     offlineAccess: true,
     });
   }, []);
     
