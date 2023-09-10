@@ -35,7 +35,7 @@ const LoginScreen = () => {
 
   const googleSignIn = async () => {
     const codigo = Math.random().toString(36).substring(2);
-    const deviceToken = "dispositivo-token";  // Reemplaza con la obtención real del deviceToken
+    const deviceToken = "dispositivo-token"; // Reemplaza con la obtención real del deviceToken
     const backendUrl = 'https://noticias-uteq-4c62c24e7cc5.herokuapp.com/usuarios/google/login';
 
     try {
@@ -49,8 +49,7 @@ const LoginScreen = () => {
 
         if (!response.ok) throw new Error('Respuesta no exitosa del servidor: ' + response.statusText);
 
-        const responseText = await response.text();
-        const responseData = JSON.parse(responseText);
+        const responseData = await response.json();
 
         if (responseData.error) {
             console.error('Error del servidor:', responseData.error);
@@ -68,7 +67,7 @@ const LoginScreen = () => {
 
     const checkSession = async () => {
         console.log("Verificando sesión...");
-        
+
         try {
             const codigo = await AsyncStorage.getItem('codigo');
             const response = await fetch('https://noticias-uteq-4c62c24e7cc5.herokuapp.com/sesiones/google/signin', {
@@ -77,21 +76,22 @@ const LoginScreen = () => {
                 body: JSON.stringify({ codigo, deviceToken }),
             });
 
-            const responseText = await response.text();
+            const responseData = await response.json();
+
             if (response.ok) {
-              console.log('Respuesta del servidor:', responseText);
-          
-              if (responseText.trim() === 'Inicio de sesión exitoso') {
-                  clearInterval(intervalId);  // Detiene el intervalo una vez que la respuesta es exitosa
-                  navigation.navigate('NavigationBar');  // Navega a 'NavigationBar'
-                  return;
-              }
-          } else {
-              console.error('Error en la verificación de la sesión:', responseText);
-              console.error('Código:', codigo);
-              console.error('Token del dispositivo:', deviceToken);
-          }
-          
+                console.log('Respuesta del servidor:', responseData);
+                if (responseData.message && responseData.message.trim() === 'Inicio de sesión exitoso') {
+                    clearInterval(intervalId); // Detiene el intervalo una vez que la respuesta es exitosa
+                    setUser(responseData.usuario); 
+                //    navigation.navigate('NavigationBar', { usuario: responseData.usuario }); // Navega a 'NavigationBar' pasando los datos del usuario
+                navigation.navigate('NavigationBar');    
+                return;
+                }
+            } else {
+                console.error('Error en la verificación de la sesión:', responseData);
+                console.error('Código:', codigo);
+                console.error('Token del dispositivo:', deviceToken);
+            }
         } catch (error) {
             console.error('Error en la verificación de la sesión:', error);
             const codigo = await AsyncStorage.getItem('codigo');
@@ -100,8 +100,9 @@ const LoginScreen = () => {
         }
     };
 
-    const intervalId = setInterval(checkSession, 1000);  // Verifica la sesión cada segundo
+    const intervalId = setInterval(checkSession, 10000); // Verifica la sesión cada segundo
 };
+
 
 
   
